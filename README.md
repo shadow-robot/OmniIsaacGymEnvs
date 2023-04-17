@@ -3,6 +3,8 @@
 ## Shadow custom asset setup
 
 Create a nucleus server at `localhost`.
+
+
 Copy both `instanceable_meshes.usd` and `left_hand.usd` to this nucleus server at the following path: `omniverse://localhost/Library/tom/mujoco_menagerie/shadow_hand/left_hand/` so that the directory structure is as follows:
 
 ```
