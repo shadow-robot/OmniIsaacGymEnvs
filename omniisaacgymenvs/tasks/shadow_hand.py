@@ -71,7 +71,17 @@ class ShadowHandTask(InHandManipulationTask):
         self.use_vel_obs = False
 
         self.fingertip_obs = True
-        self.fingertips = ["robot0:ffdistal", "robot0:mfdistal", "robot0:rfdistal", "robot0:lfdistal", "robot0:thdistal"]
+
+        self._menagerie = True
+        if self._menagerie:
+            self._side = 'lh'
+            self._robot_prefix = self._side + '_'
+        else:
+            self._robot_prefix = 'robot0:'
+
+        self.fingertips = [f"{self._robot_prefix}ffdistal", f"{self._robot_prefix}mfdistal",
+                           f"{self._robot_prefix}rfdistal", f"{self._robot_prefix}lfdistal",
+                           f"{self._robot_prefix}thdistal"]
         self.num_fingertips = len(self.fingertips)
 
         self.object_scale = torch.tensor([1.0, 1.0, 1.0])
@@ -90,7 +100,8 @@ class ShadowHandTask(InHandManipulationTask):
 
     def get_hand(self):
         hand_start_translation = torch.tensor([0.0, 0.0, 0.5], device=self.device)
-        hand_start_orientation = torch.tensor([0.0, 0.0, -0.70711, 0.70711], device=self.device)
+        # hand_start_orientation = torch.tensor([0.0, 0.0, -0.70711, 0.70711], device=self.device)
+        hand_start_orientation = torch.tensor([0.5, -0.5, 0.5, -0.5], device=self.device)
 
         shadow_hand = ShadowHand(
             prim_path=self.default_zero_env_path + "/shadow_hand", 
@@ -145,6 +156,13 @@ class ShadowHandTask(InHandManipulationTask):
                 "obs_buf": self.obs_buf
             }
         }
+        nans = torch.isnan(self.obs_buf).nonzero()
+        if nans.shape[0] != 0:
+            print('####################')
+            print(f'obs nans: {nans}')
+            for x in nans:
+                print(x)
+            # exit(0)
         return observations
     
 

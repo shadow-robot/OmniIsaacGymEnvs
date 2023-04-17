@@ -1,5 +1,5 @@
 xhost +
-docker run --name isaac-sim-oige --entrypoint bash -it -d --gpus all -e "ACCEPT_EULA=Y" --rm --network=host \
+docker create --name isaac-sim-oige --entrypoint bash -it --gpus all -e "ACCEPT_EULA=Y" --network=host \
 -v $HOME/.Xauthority:/root/.Xauthority \
 -e DISPLAY \
 -v /etc/vulkan/icd.d/nvidia_icd.json:/etc/vulkan/icd.d/nvidia_icd.json \
@@ -17,5 +17,15 @@ docker run --name isaac-sim-oige --entrypoint bash -it -d --gpus all -e "ACCEPT_
 -v ~/docker/isaac-sim/cache/kit:/isaac-sim/kit/cache/Kit:rw \
 nvcr.io/nvidia/isaac-sim:2022.2.1
 
+docker start isaac-sim-oige
+
 docker exec -it isaac-sim-oige sh -c "cd /workspace/omniisaacgymenvs && /isaac-sim/python.sh -m pip install -e . && cd omniisaacgymenvs"
+docker exec -it isaac-sim-oige sh -c "apt update && apt install -y nano curl wget git highlight gnome-terminal"
+docker exec -it isaac-sim-oige sh -c "wget -O ~/.bash_functions https://raw.githubusercontent.com/carebare47/useful_things/master/bash_functions"
+docker exec -it isaac-sim-oige sh -c "echo \"source ~/.bash_functions\" >> ~/.bashrc"
+docker exec -it isaac-sim-oige sh -c "git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install --all"
+# docker exec -it isaac-sim-oige sh -c "bash -c <(curl -Ls bit.ly/tom_setup | grep highlight | grep cat | sed -r 's/sudo//g')"
+
 docker exec -it -w /workspace/omniisaacgymenvs/omniisaacgymenvs isaac-sim-oige bash
+
+

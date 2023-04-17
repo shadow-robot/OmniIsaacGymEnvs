@@ -27,12 +27,15 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from omni.isaac.core.utils.prims import get_prim_at_path
+from omni.isaac.core.utils.prims import get_prim_at_path, find_matching_prim_paths
+
 from omni.isaac.core.utils.stage import get_current_stage
 from pxr import UsdPhysics, UsdLux
 
 def set_drive_type(prim_path, drive_type):
     joint_prim = get_prim_at_path(prim_path)
+    # for x in find_matching_prim_paths('/World/envs/env_0/shadow_hand/joints/(.*?)'):
+    #     print(x)
 
     # set drive type ("angular" or "linear")
     drive = UsdPhysics.DriveAPI.Apply(joint_prim, drive_type)
