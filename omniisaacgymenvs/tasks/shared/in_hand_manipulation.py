@@ -244,7 +244,7 @@ class InHandManipulationTask(RLTask):
         goal_env_ids = self.reset_goal_buf.nonzero(as_tuple=False).squeeze(-1)
 
         reset_buf = self.reset_buf.clone()
-
+        # actions = torch.ones_like(actions) * 0.1
         # if only goals need reset, then call set API
         if len(goal_env_ids) > 0 and len(env_ids) == 0:
             self.reset_target_pose(goal_env_ids)

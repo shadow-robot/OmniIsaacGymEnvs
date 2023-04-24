@@ -88,12 +88,14 @@ class RLTask(BaseTask):
             self._num_states = 0
 
         # initialize data spaces (defaults to gym.Box)
+        # max_obs = np.Inf
+        max_obs = 5000
         if not hasattr(self, "action_space"):
             self.action_space = spaces.Box(np.ones(self.num_actions) * -1.0, np.ones(self.num_actions) * 1.0)
         if not hasattr(self, "observation_space"):
-            self.observation_space = spaces.Box(np.ones(self.num_observations) * -np.Inf, np.ones(self.num_observations) * np.Inf)
+            self.observation_space = spaces.Box(np.ones(self.num_observations) * -max_obs, np.ones(self.num_observations) * max_obs)
         if not hasattr(self, "state_space"):
-            self.state_space = spaces.Box(np.ones(self.num_states) * -np.Inf, np.ones(self.num_states) * np.Inf)
+            self.state_space = spaces.Box(np.ones(self.num_states) * -max_obs, np.ones(self.num_states) * max_obs)
 
         self._cloner = GridCloner(spacing=self._env_spacing)
         self._cloner.define_base_env(self.default_base_env_path)

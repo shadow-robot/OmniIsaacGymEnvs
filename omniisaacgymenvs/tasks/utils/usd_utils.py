@@ -35,7 +35,8 @@ from pxr import UsdPhysics, UsdLux
 def set_drive_type(prim_path, drive_type):
     joint_prim = get_prim_at_path(prim_path)
     # for x in find_matching_prim_paths('/World/envs/env_0/shadow_hand/joints/(.*?)'):
-    #     print(x)
+    for x in find_matching_prim_paths('/World/envs/env_0/shadow_hand/(.*?)'):
+        print(x)
 
     # set drive type ("angular" or "linear")
     drive = UsdPhysics.DriveAPI.Apply(joint_prim, drive_type)

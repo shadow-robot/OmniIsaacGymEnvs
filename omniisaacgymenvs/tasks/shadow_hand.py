@@ -100,8 +100,8 @@ class ShadowHandTask(InHandManipulationTask):
 
     def get_hand(self):
         hand_start_translation = torch.tensor([0.0, 0.0, 0.5], device=self.device)
-        # hand_start_orientation = torch.tensor([0.0, 0.0, -0.70711, 0.70711], device=self.device)
-        hand_start_orientation = torch.tensor([0.5, -0.5, 0.5, -0.5], device=self.device)
+        hand_start_orientation = torch.tensor([0.0, 0.0, -0.70711, 0.70711], device=self.device)
+        # hand_start_orientation = torch.tensor([0.5, -0.5, 0.5, -0.5], device=self.device)
 
         shadow_hand = ShadowHand(
             prim_path=self.default_zero_env_path + "/shadow_hand", 
