@@ -57,7 +57,7 @@ class ShadowHand(Robot):
             if assets_root_path is None:
                 carb.log_error("Could not find Isaac Sim assets folder")
             # self._usd_path = assets_root_path + "/Isaac/Robots/ShadowHand/shadow_hand_instanceable.usd"
-            self._usd_path = "omniverse://localhost/Library/tom/mujoco_menagerie/shadow_hand/left_hand/left_hand_nvfix.usd"
+            self._usd_path = "/workspace/omniisaacgymenvs/left_hand_nvfix.usd"
             print(f'final_usd_path: {self._usd_path}')
 
         self._position = torch.tensor([0.0, 0.0, 0.5]) if translation is None else translation
