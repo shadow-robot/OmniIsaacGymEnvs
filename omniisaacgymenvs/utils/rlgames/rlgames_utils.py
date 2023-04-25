@@ -90,12 +90,18 @@ class RLGPUAlgoObserver(AlgoObserver):
             self.writer.add_scalar('scores/iter', mean_scores, epoch_num)
             self.writer.add_scalar('scores/time', mean_scores, total_time)
 
-
+import random
 class RLGPUEnv(vecenv.IVecEnv):
     def __init__(self, config_name, num_actors, **kwargs):
         self.env = env_configurations.configurations[config_name]['env_creator'](**kwargs)
 
+    def my_slower(self, three_ms_multipler=1):
+        i = 0
+        list_length = 100000 * three_ms_multipler
+        random.sample(range(i * list_length, (i + 1) * list_length), list_length)
+
     def step(self, action):
+        # self.my_slower(3)
         return  self.env.step(action)
 
     def reset(self):

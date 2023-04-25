@@ -37,7 +37,7 @@ from omniisaacgymenvs.tasks.utils.usd_utils import set_drive
 
 import carb
 from pxr import Usd, UsdGeom, Sdf, Gf, PhysxSchema, UsdPhysics
-
+import time
 
 class ShadowHand(Robot):
     def __init__(
@@ -51,13 +51,15 @@ class ShadowHand(Robot):
 
         self._usd_path = usd_path
         self._name = name
-
+        self.mujoco_hand = True
         if self._usd_path is None:
             assets_root_path = get_assets_root_path()
             if assets_root_path is None:
                 carb.log_error("Could not find Isaac Sim assets folder")
-            # self._usd_path = assets_root_path + "/Isaac/Robots/ShadowHand/shadow_hand_instanceable.usd"
-            self._usd_path = "omniverse://localhost/Library/tom/mujoco_menagerie/shadow_hand/left_hand/left_hand_nvfix.usd"
+            if self.mujoco_hand:
+                self._usd_path = "omniverse://localhost/Library/tom/mujoco_menagerie/shadow_hand/left_hand/left_hand_nvfix.usd"
+            else:
+                self._usd_path = assets_root_path + "/Isaac/Robots/ShadowHand/shadow_hand_instanceable.usd"
             print(f'final_usd_path: {self._usd_path}')
 
         self._position = torch.tensor([0.0, 0.0, 0.5]) if translation is None else translation
@@ -81,30 +83,54 @@ class ShadowHand(Robot):
                 rb.GetRetainAccelerationsAttr().Set(True)
 
     def set_motor_control_mode(self, stage, shadow_hand_path):
-        side = 'lh'
-        j0_name = 'J1'
-        joints_config = {
-                         f"{side}_WRJ2": {"stiffness": 5, "damping": 0.5, "max_force": 4.785},
-                         f"{side}_WRJ1": {"stiffness": 5, "damping": 0.5, "max_force": 2.175},
-                         f"{side}_FFJ4": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
-                         f"{side}_FFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
-                         f"{side}_FF{j0_name}": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
-                         f"{side}_MFJ4": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
-                         f"{side}_MFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
-                         f"{side}_MF{j0_name}": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
-                         f"{side}_RFJ4": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
-                         f"{side}_RFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
-                         f"{side}_RF{j0_name}": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
-                         f"{side}_LFJ5": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
-                         f"{side}_LFJ4": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
-                         f"{side}_LFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
-                         f"{side}_LF{j0_name}": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
-                         f"{side}_THJ5": {"stiffness": 1, "damping": 0.1, "max_force": 2.3722},
-                         f"{side}_THJ4": {"stiffness": 1, "damping": 0.1, "max_force": 1.45},
-                         f"{side}_THJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.99},
-                         f"{side}_THJ2": {"stiffness": 1, "damping": 0.1, "max_force": 0.99},
-                         f"{side}_THJ1": {"stiffness": 1, "damping": 0.1, "max_force": 0.81},
-                        }
+        if self.mujoco_hand:
+            side = 'lh'
+            j0_name = 'J1'
+            joints_config = {
+                             f"{side}_WRJ2": {"stiffness": 5, "damping": 0.5, "max_force": 4.785},
+                             f"{side}_WRJ1": {"stiffness": 5, "damping": 0.5, "max_force": 2.175},
+                             f"{side}_FFJ4": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                             f"{side}_FFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                             f"{side}_FF{j0_name}": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
+                             f"{side}_MFJ4": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                             f"{side}_MFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                             f"{side}_MF{j0_name}": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
+                             f"{side}_RFJ4": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                             f"{side}_RFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                             f"{side}_RF{j0_name}": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
+                             f"{side}_LFJ5": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                             f"{side}_LFJ4": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                             f"{side}_LFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                             f"{side}_LF{j0_name}": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
+                             f"{side}_THJ5": {"stiffness": 1, "damping": 0.1, "max_force": 2.3722},
+                             f"{side}_THJ4": {"stiffness": 1, "damping": 0.1, "max_force": 1.45},
+                             f"{side}_THJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.99},
+                             f"{side}_THJ2": {"stiffness": 1, "damping": 0.1, "max_force": 0.99},
+                             f"{side}_THJ1": {"stiffness": 1, "damping": 0.1, "max_force": 0.81},
+                            }
+        else:
+            joints_config = {
+                "robot0_WRJ1": {"stiffness": 5, "damping": 0.5, "max_force": 4.785},
+                "robot0_WRJ0": {"stiffness": 5, "damping": 0.5, "max_force": 2.175},
+                "robot0_FFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                "robot0_FFJ2": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                "robot0_FFJ1": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
+                "robot0_MFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                "robot0_MFJ2": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                "robot0_MFJ1": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
+                "robot0_RFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                "robot0_RFJ2": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                "robot0_RFJ1": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
+                "robot0_LFJ4": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                "robot0_LFJ3": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                "robot0_LFJ2": {"stiffness": 1, "damping": 0.1, "max_force": 0.9},
+                "robot0_LFJ1": {"stiffness": 1, "damping": 0.1, "max_force": 0.7245},
+                "robot0_THJ4": {"stiffness": 1, "damping": 0.1, "max_force": 2.3722},
+                "robot0_THJ3": {"stiffness": 1, "damping": 0.1, "max_force": 1.45},
+                "robot0_THJ2": {"stiffness": 1, "damping": 0.1, "max_force": 0.99},
+                "robot0_THJ1": {"stiffness": 1, "damping": 0.1, "max_force": 0.99},
+                "robot0_THJ0": {"stiffness": 1, "damping": 0.1, "max_force": 0.81},
+            }
         for joint_name, config in joints_config.items():
             set_drive(
                 f"{self.prim_path}/joints/{joint_name}", 

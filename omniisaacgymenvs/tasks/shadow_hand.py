@@ -38,6 +38,9 @@ from omni.isaac.core.utils.torch import *
 import numpy as np
 import torch
 import math
+from time import process_time_ns
+import time
+import random
 
 
 class ShadowHandTask(InHandManipulationTask):
@@ -102,13 +105,17 @@ class ShadowHandTask(InHandManipulationTask):
         hand_start_translation = torch.tensor([0.0, 0.0, 0.5], device=self.device)
         hand_start_orientation = torch.tensor([0.0, 0.0, -0.70711, 0.70711], device=self.device)
         # hand_start_orientation = torch.tensor([0.5, -0.5, 0.5, -0.5], device=self.device)
+        # time this
 
+        t = time.monotonic_ns()
         shadow_hand = ShadowHand(
             prim_path=self.default_zero_env_path + "/shadow_hand", 
             name="shadow_hand",
             translation=hand_start_translation, 
             orientation=hand_start_orientation,
         )
+        # self.my_slower(8)
+        self._elapsed_time_ShadowHand = time.monotonic_ns() - t
         self._sim_config.apply_articulation_settings(
             "shadow_hand", 
             get_prim_at_path(shadow_hand.prim_path), 
@@ -118,9 +125,22 @@ class ShadowHandTask(InHandManipulationTask):
         shadow_hand.set_motor_control_mode(stage=self._stage, shadow_hand_path=shadow_hand.prim_path)
         pose_dy, pose_dz = -0.39, 0.10
         return hand_start_translation, pose_dy, pose_dz
-    
+
+    def my_slower(self, thirty_ms_multipler=1):
+        i = 0
+        list_length = 100000 * thirty_ms_multipler
+        random.sample(range(i * list_length, (i + 1) * list_length), list_length)
+
     def get_hand_view(self, scene):
+        # time this
+        t = time.monotonic_ns()
         hand_view = ShadowHandView(prim_paths_expr="/World/envs/.*/shadow_hand", name="shadow_hand_view")
+        # self.my_slower(5)
+        self._elapsed_time_ShadowHandView = time.monotonic_ns() - t
+        ns_to_ms = 1000 * 1000
+        print(f'\n\n###################################################################\n')
+        print(f'elapsed_time_ShadowHand instantiation: {self._elapsed_time_ShadowHand / ns_to_ms} ms')
+        print(f'elapsed_time_ShadowHandView instantiation: {self._elapsed_time_ShadowHandView / ns_to_ms} ms')
         scene.add(hand_view._fingers)
         return hand_view
 
@@ -156,6 +176,7 @@ class ShadowHandTask(InHandManipulationTask):
                 "obs_buf": self.obs_buf
             }
         }
+
         nans = torch.isnan(self.obs_buf).nonzero()
         if nans.shape[0] != 0:
             print('####################')

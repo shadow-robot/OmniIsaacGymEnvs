@@ -33,7 +33,7 @@ import torch
 import numpy as np
 
 from datetime import datetime
-
+import random
 
 # VecEnv Wrapper for RL training
 class VecEnvRLGames(VecEnvBase):
@@ -52,6 +52,11 @@ class VecEnvRLGames(VecEnvBase):
 
         self.num_states = self._task.num_states
         self.state_space = self._task.state_space
+
+    def my_slower(self, three_ms_multipler=1):
+        i = 0
+        list_length = 10000 * three_ms_multipler
+        random.sample(range(i * list_length, (i + 1) * list_length), list_length)
 
     def step(self, actions):
         if self._task.randomize_actions:
@@ -75,6 +80,7 @@ class VecEnvRLGames(VecEnvBase):
         self._process_data()
         
         obs_dict = {"obs": self._obs, "states": self._states}
+        # self.my_slower(30)
 
         return obs_dict, self._rew, self._resets, self._extras
 

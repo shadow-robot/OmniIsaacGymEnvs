@@ -25,8 +25,7 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
+import time
 from abc import abstractmethod
 import numpy as np
 import torch
@@ -63,6 +62,7 @@ class RLTask(BaseTask):
 
         # optimization flags for pytorch JIT
         torch._C._jit_set_nvfuser_enabled(False)
+        self.post_phys_end_time = 0
 
         self.test = self._cfg["test"]
         self._device = self._cfg["sim_device"]
@@ -89,7 +89,7 @@ class RLTask(BaseTask):
 
         # initialize data spaces (defaults to gym.Box)
         # max_obs = np.Inf
-        max_obs = 5000
+        max_obs = 500
         if not hasattr(self, "action_space"):
             self.action_space = spaces.Box(np.ones(self.num_actions) * -1.0, np.ones(self.num_actions) * 1.0)
         if not hasattr(self, "observation_space"):
@@ -240,6 +240,7 @@ class RLTask(BaseTask):
         pass
 
     def post_physics_step(self):
+        self.post_phys_end_time = time.monotonic_ns()
         """ Processes RL required computations for observations, states, rewards, resets, and extras.
             Also maintains progress buffer for tracking step count per environment.
 

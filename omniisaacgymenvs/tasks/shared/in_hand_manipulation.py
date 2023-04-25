@@ -25,8 +25,7 @@
 # CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
+import time
 from abc import abstractmethod
 
 from omniisaacgymenvs.tasks.base.rl_task import RLTask
@@ -51,6 +50,7 @@ class InHandManipulationTask(RLTask):
     ) -> None:
         """[summary]
         """
+        self.pre_phys_end_time = 0
         self._num_envs = self._task_cfg["env"]["numEnvs"]
         self._env_spacing = self._task_cfg["env"]["envSpacing"]
 
@@ -278,6 +278,11 @@ class InHandManipulationTask(RLTask):
             rand_env_ids = torch.nonzero(torch.logical_and(rand_envs, reset_buf))
             dr.physics_view.step_randomization(rand_env_ids)
             self.randomization_buf[rand_env_ids] = 0
+        if self.post_phys_end_time != 0:
+            if self.pre_phys_end_time != 0:
+                dur = self.post_phys_end_time - self.pre_phys_end_time
+                print(f'physics step time: {dur / (1000 * 1000)}')
+        self.pre_phys_end_time = time.monotonic_ns()
 
     def is_done(self):
         pass

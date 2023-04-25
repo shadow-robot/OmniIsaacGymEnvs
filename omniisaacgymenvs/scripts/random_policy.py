@@ -37,6 +37,7 @@ from omniisaacgymenvs.utils.hydra_cfg.reformat import omegaconf_to_dict, print_d
 
 from omniisaacgymenvs.utils.task_util import initialize_task
 from omniisaacgymenvs.envs.vec_env_rlgames import VecEnvRLGames
+import random
 
 @hydra.main(config_name="config", config_path="../cfg")
 def parse_hydra_configs(cfg: DictConfig):
@@ -54,6 +55,11 @@ def parse_hydra_configs(cfg: DictConfig):
     cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
     cfg_dict['seed'] = cfg.seed
     task = initialize_task(cfg_dict, env)
+    def my_slower(three_ms_multipler=1):
+        i = 0
+        list_length = 10000 * three_ms_multipler
+        random.sample(range(i * list_length, (i + 1) * list_length), list_length)
+
 
     while env._simulation_app.is_running():
         if env._world.is_playing():
@@ -62,6 +68,7 @@ def parse_hydra_configs(cfg: DictConfig):
             actions = torch.tensor(np.array([env.action_space.sample() for _ in range(env.num_envs)]), device=task.rl_device)
             env._task.pre_physics_step(actions)
             env._world.step(render=render)
+            # my_slower(30)
             env.sim_frame_count += 1
             env._task.post_physics_step()
         else:
