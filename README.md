@@ -22,7 +22,7 @@ On two out of three of our machines (one RTX3080, one RTX3090), roughly half of 
 There was an error running python
 ```
 
-On the third machine (also RTX3090) we get a segmentation fault 100% of the time. All three machines are running the same nvidia driver version and same linux kernel version. 
+On the third machine (also RTX3090) we get a segmentation fault 100% of the time. All three machines are running the same nvidia driver version, same linux kernel version, and have containers created with the same `docker/run_docker_viewer.sh` script.
 
 (Note: Object gravity has been disabled to help debug hand movements and simulation starting)
 
