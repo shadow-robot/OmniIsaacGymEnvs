@@ -22,6 +22,8 @@ Roughly half of the time we get a segmentation fault:
 There was an error running python
 ```
 
+(Note: Object gravity has been disabled to help debug hand movements and simulation starting)
+
 ## About this repository
 
 This repository contains Reinforcement Learning examples that can be run with the latest release of [Isaac Sim](https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/overview.html). RL examples are trained using PPO from [rl_games](https://github.com/Denys88/rl_games) library and examples are built on top of Isaac Sim's `omni.isaac.core` and `omni.isaac.gym` frameworks.
