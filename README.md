@@ -1,17 +1,6 @@
 # Omniverse Isaac Gym Reinforcement Learning Environments for Isaac Sim
 
-## Shadow custom asset setup
-
-Create a nucleus server at `localhost`.
-
-
-Copy both `instanceable_meshes.usd` and `left_hand.usd` to this nucleus server at the following path: `omniverse://localhost/Library/tom/mujoco_menagerie/shadow_hand/left_hand/` so that the directory structure is as follows:
-
-```
-omniverse://localhost/Library/tom/mujoco_menagerie/shadow_hand/left_hand/left_hand.usd
-omniverse://localhost/Library/tom/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd
-```
-
+## shadow
 To create the container run the following:
 
 ```bash
@@ -21,39 +10,15 @@ docker/run_docker_viewer.sh
 Once inside the container, start the task with the following command:
 ```bash
 cd /workspace/omniisaacgymenvs/omniisaacgymenvs
-HYDRA_FULL_ERROR=1 /isaac-sim/python.sh scripts/rlgames_train.py task=ShadowHand
+/isaac-sim/python.sh scripts/rlgames_train.py task=ShadowHand
 ```
 
-We get a few warnings
-```
-2023-04-17 13:16:06 [27,442ms] [Warning] [omni.client.plugin]  Tick: authentication: Discovery(ws://localhost/omni/discovery): Error creating Auth/Tokens search: Not connected
-2023-04-17 13:16:06 [27,442ms] [Warning] [omni.client.plugin]  Tick: authentication: Discovery(ws://localhost/omni/discovery): Error creating Api/Connection search: Not connected
-final_usd_path: omniverse://localhost/Library/tom/mujoco_menagerie/shadow_hand/left_hand/left_hand.usd
-2023-04-17 13:16:10 [31,165ms] [Warning] [omni.hydra.scene_delegate.plugin] Calling getBypassRenderSkelMeshProcessing for prim /World/envs/env_0/shadow_hand/lh_ffproximal/visuals.proto___id0 that has not been populated
-```
-
-Sometimes we get lots of errors:
+Roughly half of the time we get a segmentation fault:
 ```
 ...
 ...
-2023-04-17 12:53:44 [66,355ms] [Error] [omni.physx.plugin] PhysX error: PxGeometryQuery::getWorldBounds(): pose is not valid., FILE /buildAgent/work/16dcef52b68a730f/source/geomutils/src/GuGeometryQuery.cpp, LINE 319
-2023-04-17 12:53:44 [66,355ms] [Error] [omni.physx.plugin] PhysX error: Exceeding maximum number of PhysX errors (1000). omni.physx will ignore logging subsequent errors until simulation stop
-2023-04-17 12:53:46 [68,377ms] [Warning] [omni.kit.notification_manager.manager] PhysX error: PxGeometryQuery::getWorldBounds(): pose is not valid.
-2023-04-17 12:53:46 [68,378ms] [Warning] [omni.kit.notification_manager.manager] PhysX error: PxGeometryQuery::getWorldBounds(): pose is not valid.
-...
-...
-```
-
-But more often than not, we get a segmentation fault with no additional error output:
-```
-Exact experiment name requested from command line: ShadowHand
-Box(-1.0, 1.0, (20,), float32) Box(-inf, inf, (157,), float32)
-current training device: cuda:0
-build mlp: 157
-RunningMeanStd:  (1,)
-RunningMeanStd:  (157,)
-[2023-04-17 14:16:46] Running RL reset
-/isaac-sim/python.sh: line 41: 20041 Segmentation fault      $python_exe "$@" $args
+[2023-04-28 10:11:45] Running RL reset
+/isaac-sim/python.sh: line 41: 4449 Segmentation fault   (core dumped) $python_exe "$@" $args
 There was an error running python
 ```
 
