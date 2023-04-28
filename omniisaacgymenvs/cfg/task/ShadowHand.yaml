@@ -41,7 +41,7 @@ env:
   fallPenalty: 0.0
   velObsScale: 0.2
  
-  objectType: "block"
+  objectType: "vive"  # "block"
   observationType: "full" # can be "full_no_vel", "full", "openai", "full_state"
   asymmetric_observations: False
   successTolerance: 0.1

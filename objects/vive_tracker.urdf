@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<robot name="object">
+  <link name="object">
+    <visual>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <!--mesh filename="meshes/HTC_Vive_Tracker_2017.obj" scale="1 1 1"/-->
+        <mesh filename="meshes/HTC_Vive_Tracker_2017.obj" scale=".001 .001 .001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/HTC_Vive_Tracker_2017.obj" scale=".001 .001 .001"/>
+        <!--box size="0.02 0.02 0.02"/-->
+        <!--box size="1 1 1"/-->
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.086"/>
+    </inertial>
+  </link>
+</robot>

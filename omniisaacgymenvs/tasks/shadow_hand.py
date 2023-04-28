@@ -53,7 +53,7 @@ class ShadowHandTask(InHandManipulationTask):
         self._task_cfg = sim_config.task_config
 
         self.object_type = self._task_cfg["env"]["objectType"]
-        assert self.object_type in ["block"]
+        assert self.object_type in ["block", "vive"]
 
         self.obs_type = self._task_cfg["env"]["observationType"]
         if not (self.obs_type in ["openai", "full_no_vel", "full", "full_state"]):
