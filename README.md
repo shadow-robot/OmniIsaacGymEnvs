@@ -13,7 +13,7 @@ cd /workspace/omniisaacgymenvs/omniisaacgymenvs
 /isaac-sim/python.sh scripts/rlgames_train.py task=ShadowHand
 ```
 
-Roughly half of the time we get a segmentation fault:
+On two out of three of our machines (one RTX3080, one RTX3090), roughly half of the time we get a segmentation fault:
 ```
 ...
 ...
@@ -21,6 +21,8 @@ Roughly half of the time we get a segmentation fault:
 /isaac-sim/python.sh: line 41: 4449 Segmentation fault   (core dumped) $python_exe "$@" $args
 There was an error running python
 ```
+
+On the third machine (also RTX3090) we get a segmentation fault 100% of the time. All three machines are running the same nvidia driver version and same linux kernel version. 
 
 (Note: Object gravity has been disabled to help debug hand movements and simulation starting)
 
