@@ -25,6 +25,7 @@ docker exec -it isaac-sim-oige sh -c "apt update && apt install -y nano curl wge
 docker exec -it isaac-sim-oige sh -c "wget -O ~/.bash_functions https://raw.githubusercontent.com/carebare47/useful_things/master/bash_functions"
 docker exec -it isaac-sim-oige sh -c "echo \"source ~/.bash_functions\" >> ~/.bashrc"
 docker exec -it isaac-sim-oige sh -c "git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install --all"
+docker exec -it isaac-sim-oige sh -c "/workspace/omniisaacgymenvs/docker/ros.sh"
 # docker exec -it isaac-sim-oige sh -c "bash -c <(curl -Ls bit.ly/tom_setup | grep highlight | grep cat | sed -r 's/sudo//g')"
 
 docker exec -it -w /workspace/omniisaacgymenvs/omniisaacgymenvs isaac-sim-oige bash
