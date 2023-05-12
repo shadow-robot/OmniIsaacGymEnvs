@@ -19,9 +19,9 @@ nvcr.io/nvidia/isaac-sim:2022.2.1
 
 docker start isaac-sim-oige
 
-docker exec -it isaac-sim-oige sh -c "DEBIAN_FRONTEND=noninteractive TZ=Europe/London apt-get install -y tzdata"
+docker exec -it isaac-sim-oige sh -c "apt update && DEBIAN_FRONTEND=noninteractive TZ=Europe/London apt-get install -y tzdata"
 docker exec -it isaac-sim-oige sh -c "cd /workspace/omniisaacgymenvs && /isaac-sim/python.sh -m pip install -e . && cd omniisaacgymenvs"
-docker exec -it isaac-sim-oige sh -c "apt update && apt install -y nano curl wget git highlight gnome-terminal"
+docker exec -it isaac-sim-oige sh -c "apt install -y nano curl wget git highlight gnome-terminal"
 docker exec -it isaac-sim-oige sh -c "wget -O ~/.bash_functions https://raw.githubusercontent.com/carebare47/useful_things/master/bash_functions"
 docker exec -it isaac-sim-oige sh -c "echo \"source ~/.bash_functions\" >> ~/.bashrc"
 docker exec -it isaac-sim-oige sh -c "git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install --all"
