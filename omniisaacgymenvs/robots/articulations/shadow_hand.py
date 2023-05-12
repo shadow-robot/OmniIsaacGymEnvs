@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+import os
 from typing import Optional
 import numpy as np
 import torch
@@ -51,15 +51,29 @@ class ShadowHand(Robot):
 
         self._usd_path = usd_path
         self._name = name
-        self.mujoco = True
+        mujoco_env_str = os.environ.get('USE_MUJOCO')
+        if mujoco_env_str is None:
+            self.mujoco = True
+        elif 'true' in mujoco_env_str.lower():
+            self.mujoco = True
+        elif 'false' in mujoco_env_str.lower():
+            self.mujoco = False
+
         if self._usd_path is None:
             assets_root_path = get_assets_root_path()
             if assets_root_path is None:
                 carb.log_error("Could not find Isaac Sim assets folder")
             if self.mujoco:
-                self._usd_path = "/workspace/omniisaacgymenvs/left_hand_nvfix.usd"
+                # self._usd_path = "/workspace/omniisaacgymenvs/lh_2023/lh_2023.usd"
+                # self._usd_path = "/workspace/omniisaacgymenvs/left_hand_nvfix.usd"
+                # self._usd_path = "/workspace/isaac_usd_assets/left_hand_nvfix_110523.usda"
+                # self._usd_path = "/workspace/isaac_usd_assets/left_hand_nvfix_120523.usda"
+                # self._usd_path = "/workspace/isaac_usd_assets/left_hand_nvfix_110523_fixed_tendon.usda"
+                # self._usd_path = "/workspace/isaac_usd_assets/left_hand_nvfix_110523_default_tendon.usda"
+                self._usd_path = "/workspace/omniisaacgymenvs/left_hand_nvfix_110523_fixed_tendon.usda"
             else:
-                self._usd_path = assets_root_path + "/Isaac/Robots/ShadowHand/shadow_hand_instanceable.usd"
+                # self._usd_path = assets_root_path + "/Isaac/Robots/ShadowHand/shadow_hand_instanceable.usd"
+                self._usd_path = "/workspace/isaac_usd_assets/shadow_hand_instanceable_orig.usda"
             print(f'final_usd_path: {self._usd_path}')
 
         self._position = torch.tensor([0.0, 0.0, 0.5]) if translation is None else translation

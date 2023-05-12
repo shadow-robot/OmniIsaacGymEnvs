@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+import os
 from omniisaacgymenvs.tasks.base.rl_task import RLTask
 from omniisaacgymenvs.tasks.shared.in_hand_manipulation import InHandManipulationTask
 from omniisaacgymenvs.robots.articulations.shadow_hand import ShadowHand
@@ -72,7 +72,13 @@ class ShadowHandTask(InHandManipulationTask):
 
         self.fingertip_obs = True
 
-        self._menagerie = True
+        mujoco_env_str = os.environ.get('USE_MUJOCO')
+        if mujoco_env_str is None:
+            self._menagerie = True
+        elif 'true' in mujoco_env_str.lower():
+            self._menagerie = True
+        elif 'false' in mujoco_env_str.lower():
+            self._menagerie = False
         if self._menagerie:
             self._side = 'lh'
             self._robot_prefix = self._side + '_'

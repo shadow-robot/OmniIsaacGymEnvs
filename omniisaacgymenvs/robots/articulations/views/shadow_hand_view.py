@@ -26,7 +26,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
+import os
 from typing import Optional
 
 from omni.isaac.core.articulations import ArticulationView
@@ -46,7 +46,13 @@ class ShadowHandView(ArticulationView):
             name=name,
             reset_xform_properties=False
         )
-        self.mujoco = True
+        mujoco_env_str = os.environ.get('USE_MUJOCO')
+        if mujoco_env_str is None:
+            self.mujoco = True
+        elif 'true' in mujoco_env_str.lower():
+            self.mujoco = True
+        elif 'false' in mujoco_env_str.lower():
+            self.mujoco = False
         if self.mujoco:
             self._fingers = RigidPrimView(prim_paths_expr="/World/envs/.*/shadow_hand/lh.*distal", name="finger_view", reset_xform_properties=False)
         else:

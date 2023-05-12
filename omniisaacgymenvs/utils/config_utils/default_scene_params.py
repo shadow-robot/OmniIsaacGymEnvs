@@ -79,8 +79,8 @@ default_physics_material = {
 }
 
 default_sim_params = {
-    # "gravity": [0.0, 0.0, -9.81],
-    "gravity": [0.0, 0.0, 0.0],
+    "gravity": [0.0, 0.0, -9.81],
+    # "gravity": [0.0, 0.0, 0.0],
     "dt": 1.0 / 60.0,
     "substeps": 1,
     "use_gpu_pipeline": True,

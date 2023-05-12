@@ -6,6 +6,7 @@ docker create --name isaac-sim-oige --entrypoint bash -it --gpus all -e "ACCEPT_
 -v /etc/vulkan/implicit_layer.d/nvidia_layers.json:/etc/vulkan/implicit_layer.d/nvidia_layers.json \
 -v /usr/share/glvnd/egl_vendor.d/10_nvidia.json:/usr/share/glvnd/egl_vendor.d/10_nvidia.json \
 -v ${PWD}:/workspace/omniisaacgymenvs \
+-v /home/tom/isaac_usd_assets:/workspace/isaac_usd_assets \
 -v ~/docker/isaac-sim/cache/ov:/root/.cache/ov:rw \
 -v ~/docker/isaac-sim/cache/pip:/root/.cache/pip:rw \
 -v ~/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw \
@@ -19,7 +20,9 @@ nvcr.io/nvidia/isaac-sim:2022.2.1
 
 docker start isaac-sim-oige
 
-docker exec -it isaac-sim-oige sh -c "apt update && DEBIAN_FRONTEND=noninteractive TZ=Europe/London apt-get install -y tzdata"
+docker exec -it isaac-sim-oige sh -c 'echo "export USE_MUJOCO=True" >> ~/.bashrc'
+docker exec -it isaac-sim-oige sh -c "apt update && apt install debconf-utils && debconf-set-selections <<< 'keyboard-configuration keyboard-configuration/variant select English (UK)' && debconf-set-selections <<< 'keyboard-configuration keyboard-configuration/layoutcode string English (UK)'"
+docker exec -it isaac-sim-oige sh -c "apt update && DEBIAN_FRONTEND=noninteractive TZ=Europe/London apt-get install -y tzdata && DEBIAN_FRONTEND=noninteractive apt-get install -y keyboard-configuration && dpkg-reconfigure keyboard-configuration -f noninteractive"
 docker exec -it isaac-sim-oige sh -c "cd /workspace/omniisaacgymenvs && /isaac-sim/python.sh -m pip install -e . && cd omniisaacgymenvs"
 docker exec -it isaac-sim-oige sh -c "apt install -y nano curl wget git highlight gnome-terminal"
 docker exec -it isaac-sim-oige sh -c "wget -O ~/.bash_functions https://raw.githubusercontent.com/carebare47/useful_things/master/bash_functions"

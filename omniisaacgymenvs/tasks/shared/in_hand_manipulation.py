@@ -188,6 +188,8 @@ class InHandManipulationTask(RLTask):
         self.cur_targets = torch.zeros((self.num_envs, self.num_hand_dofs), dtype=torch.float, device=self.device)
         
         dof_limits = self._hands.get_dof_limits()
+        dof_limits[:, :, 0] = dof_limits[:, :, 0] + 0.07
+        dof_limits[:, :, 1] = dof_limits[:, :, 1] - 0.07
         self.hand_dof_lower_limits, self.hand_dof_upper_limits = torch.t(dof_limits[0].to(self.device))
 
         self.hand_dof_default_pos = torch.zeros(self.num_hand_dofs, dtype=torch.float, device=self.device)

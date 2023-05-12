@@ -43,6 +43,7 @@ from rl_games.torch_runner import Runner
 import datetime
 import os
 import torch
+import rospy
 
 class RLGTrainer():
     def __init__(self, cfg, cfg_dict):
@@ -110,9 +111,9 @@ def parse_hydra_configs(cfg: DictConfig):
     from omni.isaac.core.utils.torch.maths import set_seed
     cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
     cfg_dict['seed'] = cfg.seed
-
+    rospy.sleep(5)
     task = initialize_task(cfg_dict, env)
-
+    rospy.sleep(5)
     if cfg.wandb_activate and rank == 0:
         # Make sure to install WandB if you actually use this.
         import wandb
@@ -140,4 +141,5 @@ def parse_hydra_configs(cfg: DictConfig):
 
 
 if __name__ == '__main__':
+    rospy.init_node('a')
     parse_hydra_configs()
