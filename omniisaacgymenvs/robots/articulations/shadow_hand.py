@@ -99,7 +99,7 @@ class ShadowHand(Robot):
     def set_motor_control_mode(self, stage, shadow_hand_path):
         if self.mujoco:
             side = 'lh'
-            j0_name = 'J1'
+            j0_name = 'J2'
             joints_config = {
                              f"{side}_WRJ2": {"stiffness": 5, "damping": 0.5, "max_force": 4.785},
                              f"{side}_WRJ1": {"stiffness": 5, "damping": 0.5, "max_force": 2.175},

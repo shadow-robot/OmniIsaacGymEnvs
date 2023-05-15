@@ -66,7 +66,7 @@ class ShadowHandView(ArticulationView):
         super().initialize(physics_sim_view)
         if self.mujoco:
             side = 'lh'
-            j0_name = 'J1'
+            j0_name = 'J2'
             self.actuated_joint_names = [f'{side}_WRJ2', f'{side}_WRJ1',
                                          f'{side}_FFJ4', f'{side}_FFJ3', f'{side}_FF{j0_name}',
                                          f'{side}_MFJ4', f'{side}_MFJ3', f'{side}_MF{j0_name}',
@@ -79,8 +79,8 @@ class ShadowHandView(ArticulationView):
             self.actuated_joint_names = ['robot0_WRJ1', 'robot0_WRJ0',
                                          'robot0_FFJ3', 'robot0_FFJ2', 'robot0_FFJ1',
                                          'robot0_MFJ3', 'robot0_MFJ2', 'robot0_MFJ1',
-                                         'robot0_RFJ3', 'robot0_RFJ2', 'robot0_RFJ1', 'robot0_LFJ4',
-                                         'robot0_LFJ3', 'robot0_LFJ2', 'robot0_LFJ1',
+                                         'robot0_RFJ3', 'robot0_RFJ2', 'robot0_RFJ1',
+                                         'robot0_LFJ4', 'robot0_LFJ3', 'robot0_LFJ2', 'robot0_LFJ1',
                                          'robot0_THJ4', 'robot0_THJ3', 'robot0_THJ2', 'robot0_THJ1', 'robot0_THJ0',
                                          ]
         self._actuated_dof_indices = list()

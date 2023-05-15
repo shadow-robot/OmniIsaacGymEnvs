@@ -147,7 +147,8 @@ class InHandManipulationTask(RLTask):
     def get_object(self, hand_start_translation, pose_dy, pose_dz):
         self.object_start_translation = hand_start_translation.clone()
         self.object_start_translation[1] += pose_dy
-        self.object_start_translation[2] += (pose_dz + 0.1)
+        # self.object_start_translation[2] += (pose_dz + 0.1)
+        self.object_start_translation[2] += pose_dz
         self.object_start_orientation = torch.tensor([1.0, 0.0, 0.0, 0.0], device=self.device)
         if self.object_type == "block":
             self.object_usd_path = f"{self._assets_root_path}/Isaac/Props/Blocks/block_instanceable.usd"
