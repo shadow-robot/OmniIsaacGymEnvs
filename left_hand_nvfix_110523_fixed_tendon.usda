@@ -198,7 +198,7 @@ def Xform "left_hand_01" (
         }
 
         def PhysicsRevoluteJoint "lh_FFJ2" (
-            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_FFJ0"]
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_T_FFJ2c"]
         )
         {
             uniform token physics:axis = "X"
@@ -212,20 +212,20 @@ def Xform "left_hand_01" (
             quatf physics:localRot1 = (1, 0, 0, 0)
             float physics:lowerLimit = 0
             float physics:upperLimit = 90.000206
-            float physxJoint:armature = 0.0002
+            # float physxJoint:armature = 0.0002
             float physxJoint:maxJointVelocity = 250
             float physxLimit:X:damping = 0.1
             float physxLimit:X:stiffness = 0
-            float physxTendon:lh_FFJ0:damping = 0
-            float[] physxTendon:lh_FFJ0:gearing = [-0.00805]
-            float physxTendon:lh_FFJ0:lowerLimit = -0.001
-            float physxTendon:lh_FFJ0:restLength = 0
-            float physxTendon:lh_FFJ0:stiffness = 0
-            float physxTendon:lh_FFJ0:upperLimit = 0.001
+            float physxTendon:lh_T_FFJ2c:damping = 0
+            float[] physxTendon:lh_T_FFJ2c:gearing = [-0.00805]
+            float physxTendon:lh_T_FFJ2c:lowerLimit = -0.001
+            float physxTendon:lh_T_FFJ2c:restLength = 0
+            float physxTendon:lh_T_FFJ2c:stiffness = 0
+            float physxTendon:lh_T_FFJ2c:upperLimit = 0.001
         }
 
         def PhysicsRevoluteJoint "lh_FFJ1" (
-            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_FFJ0"]
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_T_FFJ2c"]
         )
         {
             uniform token physics:axis = "X"
@@ -239,11 +239,11 @@ def Xform "left_hand_01" (
             quatf physics:localRot1 = (1, 0, 0, 0)
             float physics:lowerLimit = 0
             float physics:upperLimit = 90.000206
-            float physxJoint:armature = 0.0002
+            # float physxJoint:armature = 0.0002
             float physxJoint:maxJointVelocity = 250
             float physxLimit:X:damping = 0.1
             float physxLimit:X:stiffness = 0
-            float[] physxTendon:lh_FFJ0:gearing = [0.00705]
+            float[] physxTendon:lh_T_FFJ2c:gearing = [0.00705]
         }
 
         def PhysicsRevoluteJoint "lh_MFJ4" (
@@ -287,7 +287,7 @@ def Xform "left_hand_01" (
         }
 
         def PhysicsRevoluteJoint "lh_MFJ2" (
-            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_MFJ0"]
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_T_MFJ2c"]
         )
         {
             uniform token physics:axis = "X"
@@ -301,20 +301,20 @@ def Xform "left_hand_01" (
             quatf physics:localRot1 = (1, 0, 0, 0)
             float physics:lowerLimit = 0
             float physics:upperLimit = 90.000206
-            float physxJoint:armature = 0.0002
+            # float physxJoint:armature = 0.0002
             float physxJoint:maxJointVelocity = 250
             float physxLimit:X:damping = 0.1
             float physxLimit:X:stiffness = 0
-            float physxTendon:lh_MFJ0:damping = 0
-            float[] physxTendon:lh_MFJ0:gearing = [-0.00805]
-            float physxTendon:lh_MFJ0:lowerLimit = -0.001
-            float physxTendon:lh_MFJ0:restLength = 0
-            float physxTendon:lh_MFJ0:stiffness = 0
-            float physxTendon:lh_MFJ0:upperLimit = 0.001
+            float physxTendon:lh_T_MFJ2c:damping = 0
+            float[] physxTendon:lh_T_MFJ2c:gearing = [-0.00805]
+            float physxTendon:lh_T_MFJ2c:lowerLimit = -0.001
+            float physxTendon:lh_T_MFJ2c:restLength = 0
+            float physxTendon:lh_T_MFJ2c:stiffness = 0
+            float physxTendon:lh_T_MFJ2c:upperLimit = 0.001
         }
 
         def PhysicsRevoluteJoint "lh_MFJ1" (
-            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_MFJ0"]
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_T_MFJ2c"]
         )
         {
             uniform token physics:axis = "X"
@@ -328,11 +328,11 @@ def Xform "left_hand_01" (
             quatf physics:localRot1 = (1, 0, 0, 0)
             float physics:lowerLimit = 0
             float physics:upperLimit = 90.000206
-            float physxJoint:armature = 0.0002
+            # float physxJoint:armature = 0.0002
             float physxJoint:maxJointVelocity = 250
             float physxLimit:X:damping = 0.1
             float physxLimit:X:stiffness = 0
-            float[] physxTendon:lh_MFJ0:gearing = [0.00705]
+            float[] physxTendon:lh_T_MFJ2c:gearing = [0.00705]
         }
 
         def PhysicsRevoluteJoint "lh_RFJ4" (
@@ -376,7 +376,7 @@ def Xform "left_hand_01" (
         }
 
         def PhysicsRevoluteJoint "lh_RFJ2" (
-            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_RFJ0"]
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_T_RFJ2c"]
         )
         {
             uniform token physics:axis = "X"
@@ -390,20 +390,20 @@ def Xform "left_hand_01" (
             quatf physics:localRot1 = (1, 0, 0, 0)
             float physics:lowerLimit = 0
             float physics:upperLimit = 90.000206
-            float physxJoint:armature = 0.0002
+            # float physxJoint:armature = 0.0002
             float physxJoint:maxJointVelocity = 250
             float physxLimit:X:damping = 0.1
             float physxLimit:X:stiffness = 0
-            float physxTendon:lh_RFJ0:damping = 0
-            float[] physxTendon:lh_RFJ0:gearing = [-0.00805]
-            float physxTendon:lh_RFJ0:lowerLimit = -0.001
-            float physxTendon:lh_RFJ0:restLength = 0
-            float physxTendon:lh_RFJ0:stiffness = 0
-            float physxTendon:lh_RFJ0:upperLimit = 0.001
+            float physxTendon:lh_T_RFJ2c:damping = 0
+            float[] physxTendon:lh_T_RFJ2c:gearing = [-0.00805]
+            float physxTendon:lh_T_RFJ2c:lowerLimit = -0.001
+            float physxTendon:lh_T_RFJ2c:restLength = 0
+            float physxTendon:lh_T_RFJ2c:stiffness = 0
+            float physxTendon:lh_T_RFJ2c:upperLimit = 0.001
         }
 
         def PhysicsRevoluteJoint "lh_RFJ1" (
-            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_RFJ0"]
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_T_RFJ2c"]
         )
         {
             uniform token physics:axis = "X"
@@ -417,11 +417,11 @@ def Xform "left_hand_01" (
             quatf physics:localRot1 = (1, 0, 0, 0)
             float physics:lowerLimit = 0
             float physics:upperLimit = 90.000206
-            float physxJoint:armature = 0.0002
+            # float physxJoint:armature = 0.0002
             float physxJoint:maxJointVelocity = 250
             float physxLimit:X:damping = 0.1
             float physxLimit:X:stiffness = 0
-            float[] physxTendon:lh_RFJ0:gearing = [0.00705]
+            float[] physxTendon:lh_T_RFJ2c:gearing = [0.00705]
         }
 
         def PhysicsRevoluteJoint "lh_LFJ5" (
@@ -485,7 +485,7 @@ def Xform "left_hand_01" (
         }
 
         def PhysicsRevoluteJoint "lh_LFJ2" (
-            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_LFJ0"]
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_T_LFJ2c"]
         )
         {
             uniform token physics:axis = "X"
@@ -499,20 +499,20 @@ def Xform "left_hand_01" (
             quatf physics:localRot1 = (1, 0, 0, 0)
             float physics:lowerLimit = 0
             float physics:upperLimit = 90.000206
-            float physxJoint:armature = 0.0002
+            # float physxJoint:armature = 0.0002
             float physxJoint:maxJointVelocity = 250
             float physxLimit:X:damping = 0.1
             float physxLimit:X:stiffness = 0
-            float physxTendon:lh_LFJ0:damping = 0
-            float[] physxTendon:lh_LFJ0:gearing = [-0.00805]
-            float physxTendon:lh_LFJ0:lowerLimit = -0.001
-            float physxTendon:lh_LFJ0:restLength = 0
-            float physxTendon:lh_LFJ0:stiffness = 0
-            float physxTendon:lh_LFJ0:upperLimit = 0.001
+            float physxTendon:lh_T_LFJ2c:damping = 0
+            float[] physxTendon:lh_T_LFJ2c:gearing = [-0.00805]
+            float physxTendon:lh_T_LFJ2c:lowerLimit = -0.001
+            float physxTendon:lh_T_LFJ2c:restLength = 0
+            float physxTendon:lh_T_LFJ2c:stiffness = 0
+            float physxTendon:lh_T_LFJ2c:upperLimit = 0.001
         }
 
         def PhysicsRevoluteJoint "lh_LFJ1" (
-            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_LFJ0"]
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_T_LFJ2c"]
         )
         {
             uniform token physics:axis = "X"
@@ -526,11 +526,11 @@ def Xform "left_hand_01" (
             quatf physics:localRot1 = (1, 0, 0, 0)
             float physics:lowerLimit = 0
             float physics:upperLimit = 90.000206
-            float physxJoint:armature = 0.0002
+            # float physxJoint:armature = 0.0002
             float physxJoint:maxJointVelocity = 250
             float physxLimit:X:damping = 0.1
             float physxLimit:X:stiffness = 0
-            float[] physxTendon:lh_LFJ0:gearing = [0.00705]
+            float[] physxTendon:lh_T_LFJ2c:gearing = [0.00705]
         }
 
         def PhysicsRevoluteJoint "lh_THJ5" (
