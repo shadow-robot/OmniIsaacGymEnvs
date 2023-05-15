@@ -1,3 +1,4 @@
+#!/bin/bash
 xhost +
 docker create --name isaac-sim-oige --entrypoint bash -it --gpus all -e "ACCEPT_EULA=Y" --network=host \
 -v $HOME/.Xauthority:/root/.Xauthority \
@@ -19,6 +20,11 @@ docker create --name isaac-sim-oige --entrypoint bash -it --gpus all -e "ACCEPT_
 nvcr.io/nvidia/isaac-sim:2022.2.1
 
 docker start isaac-sim-oige
+
+if [[ $(hostname) == "Athena" ]]; then
+  echo "On Athena, enabling apt cache proxy..."
+  docker exec -it isaac-sim-oige sh -c "echo 'Acquire::http::Proxy \"http://localhost:3142\";' >> /etc/apt/apt.conf.d/00aptproxy"
+fi
 
 docker exec -it isaac-sim-oige sh -c 'echo "export USE_MUJOCO=True" >> ~/.bashrc'
 docker exec -it isaac-sim-oige sh -c "apt update && apt install debconf-utils && debconf-set-selections <<< 'keyboard-configuration keyboard-configuration/variant select English (UK)' && debconf-set-selections <<< 'keyboard-configuration keyboard-configuration/layoutcode string English (UK)'"
