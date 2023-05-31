@@ -71,6 +71,7 @@ class ShadowHand(Robot):
                 # self._usd_path = "/workspace/isaac_usd_assets/left_hand_nvfix_110523_fixed_tendon.usda"
                 # self._usd_path = "/workspace/isaac_usd_assets/left_hand_nvfix_110523_default_tendon.usda"
                 self._usd_path = "/workspace/omniisaacgymenvs/left_hand_nvfix_110523_fixed_tendon.usda"
+                # self._usd_path = "/workspace/omniisaacgymenvs/left_hand_nvfix_110523_fixed_tendon_fixedcontactmeshes.usda"
             else:
                 # self._usd_path = assets_root_path + "/Isaac/Robots/ShadowHand/shadow_hand_instanceable.usd"
                 self._usd_path = "/workspace/omniisaacgymenvs/shadow_hand_instanceable_orig.usda"
