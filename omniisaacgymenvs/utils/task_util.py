@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-def initialize_task(config, env, init_sim=True):
+def initialize_task(config, env, init_sim=True, no_obj_grav=False):
     from .config_utils.sim_config import SimConfig
     sim_config = SimConfig(config)
 
@@ -63,6 +63,9 @@ def initialize_task(config, env, init_sim=True):
         "ShadowHandOpenAI_FF": ShadowHandTask,
         "ShadowHandOpenAI_LSTM": ShadowHandTask,
     }
+
+    if no_obj_grav:
+        sim_config._sim_params['gravity'] = [0.0, 0.0, 0.0]
 
     cfg = sim_config.config
     task = task_map[cfg["task_name"]](

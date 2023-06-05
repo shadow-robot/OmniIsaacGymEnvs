@@ -21,7 +21,7 @@ nvcr.io/nvidia/isaac-sim:2022.2.1
 
 docker start isaac-sim-oige
 
-if [[ $(hostname) == "Athena" ]]; then
+if [[ $(hostname) == "Athena" || $(hostname) == "tomhome" ]]; then
   echo "On Athena, enabling apt cache proxy..."
   docker exec -it isaac-sim-oige sh -c "echo 'Acquire::http::Proxy \"http://localhost:3142\";' >> /etc/apt/apt.conf.d/00aptproxy"
 fi

@@ -89,13 +89,19 @@ def parse_hydra_configs(cfg: DictConfig):
     env = VecEnvRLGames(headless=headless, sim_device=cfg.device_id, enable_livestream=cfg.enable_livestream, enable_viewport=enable_viewport)
     # sets seed. if seed is -1 will pick a random one
     from omni.isaac.core.utils.torch.maths import set_seed
+    from omni.isaac.core.utils.torch import unscale
     cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
     cfg_dict['seed'] = cfg.seed
+
     rospy.sleep(5)
-    task = initialize_task(cfg_dict, env)
+    task = initialize_task(cfg_dict, env, no_obj_grav=True)
     rospy.sleep(5)
     first_loop = True
     params_dict['joint_names'] = env._task._hands.actuated_joint_names
+    dof_limits = env._task._hands.get_dof_limits()
+    dof_limits[:, :, 0] = dof_limits[:, :, 0] + 0.07
+    dof_limits[:, :, 1] = dof_limits[:, :, 1] - 0.07
+    hand_dof_lower_limits, hand_dof_upper_limits = torch.t(dof_limits[0].to(task.rl_device))
     i = 0
     a = False
     while True:
@@ -126,7 +132,7 @@ def parse_hydra_configs(cfg: DictConfig):
             if first_loop:
                 sample = env.action_space.sample()
                 first_loop = False
-            action_tensor = np.resize(np.zeros_like(sample), (env.num_envs, sample.shape[0]))
+                action_tensor = np.resize(np.zeros_like(sample), (env.num_envs, sample.shape[0]))
             if params_dict['joint_name'] == 'all':
                 action_tensor[:, :] = params_dict['joint_value']
             else:
@@ -137,8 +143,17 @@ def parse_hydra_configs(cfg: DictConfig):
                         f'\tid: {params_dict["joint_id"]}'
                         f'\tvalue: {params_dict["joint_value"]}')
                     params_dict['changed'] = False
-                action_tensor[:, params_dict['joint_id']] = params_dict['joint_value']
+                hand_joint_index = params_dict['joint_id']
+                try:
+                    index_in_action_tensor = env._task._hands.actuated_dof_indices.index(hand_joint_index)
+                except ValueError as e:
+                    print(f'joint index {hand_joint_index} could not be found in actuated indices list')
+                else:
+                    action_tensor[:, index_in_action_tensor] = params_dict['joint_value']
             actions = torch.tensor(action_tensor, device=task.rl_device)
+            actions = unscale(actions,
+                              hand_dof_lower_limits[env._task._hands.actuated_dof_indices],
+                              hand_dof_upper_limits[env._task._hands.actuated_dof_indices])
             env._task.pre_physics_step(actions)
             env._world.step(render=render)
             env.sim_frame_count += 1
