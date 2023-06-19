@@ -47,6 +47,7 @@ class ShadowHandView(ArticulationView):
             reset_xform_properties=False
         )
         mujoco_env_str = os.environ.get('USE_MUJOCO')
+        self._side = 'lh'
         if mujoco_env_str is None:
             self.mujoco = True
         elif 'true' in mujoco_env_str.lower():
@@ -54,7 +55,7 @@ class ShadowHandView(ArticulationView):
         elif 'false' in mujoco_env_str.lower():
             self.mujoco = False
         if self.mujoco:
-            self._fingers = RigidPrimView(prim_paths_expr="/World/envs/.*/shadow_hand/lh.*distal", name="finger_view", reset_xform_properties=False)
+            self._fingers = RigidPrimView(prim_paths_expr=f"/World/envs/.*/shadow_hand/{self._side}.*distal", name="finger_view", reset_xform_properties=False)
         else:
             self._fingers = RigidPrimView(prim_paths_expr="/World/envs/.*/shadow_hand/robot0.*distal", name="finger_view", reset_xform_properties=False)
 
@@ -65,7 +66,7 @@ class ShadowHandView(ArticulationView):
     def initialize(self, physics_sim_view):
         super().initialize(physics_sim_view)
         if self.mujoco:
-            side = 'lh'
+            side = self._side
             j0_name = 'J2'
             self.actuated_joint_names = [f'{side}_WRJ2', f'{side}_WRJ1',
                                          f'{side}_FFJ4', f'{side}_FFJ3', f'{side}_FF{j0_name}',
