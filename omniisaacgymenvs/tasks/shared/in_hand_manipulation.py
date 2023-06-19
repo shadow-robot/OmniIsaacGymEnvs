@@ -153,8 +153,7 @@ class InHandManipulationTask(RLTask):
         if self.object_type == "block":
             self.object_usd_path = f"{self._assets_root_path}/Isaac/Props/Blocks/block_instanceable.usd"
         else:
-            # self.object_usd_path = f"/workspace/omniisaacgymenvs/objects/test_vive_flat.usd"
-            self.object_usd_path = f"/workspace/omniisaacgymenvs/objects/test_vive_2_flat.usda"
+            self.object_usd_path = "/workspace/omniisaacgymenvs/sr_assets/objects/test_vive_2_flat.usda"
         add_reference_to_stage(self.object_usd_path, self.default_zero_env_path + "/object")
         obj = XFormPrim(
             prim_path=self.default_zero_env_path + "/object/object",

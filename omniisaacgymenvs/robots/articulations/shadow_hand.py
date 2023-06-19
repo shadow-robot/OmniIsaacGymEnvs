@@ -52,6 +52,7 @@ class ShadowHand(Robot):
         self._usd_path = usd_path
         self._name = name
         mujoco_env_str = os.environ.get('USE_MUJOCO')
+        self._side = 'lh'
         if mujoco_env_str is None:
             self.mujoco = True
         elif 'true' in mujoco_env_str.lower():
@@ -64,18 +65,10 @@ class ShadowHand(Robot):
             if assets_root_path is None:
                 carb.log_error("Could not find Isaac Sim assets folder")
             if self.mujoco:
-                # self._usd_path = "/workspace/omniisaacgymenvs/lh_2023/lh_2023.usd"
-                # self._usd_path = "/workspace/omniisaacgymenvs/left_hand_nvfix.usd"
-                # self._usd_path = "/workspace/isaac_usd_assets/left_hand_nvfix_110523.usda"
-                # self._usd_path = "/workspace/isaac_usd_assets/left_hand_nvfix_120523.usda"
-                # self._usd_path = "/workspace/isaac_usd_assets/left_hand_nvfix_110523_fixed_tendon.usda"
-                # self._usd_path = "/workspace/isaac_usd_assets/left_hand_nvfix_110523_default_tendon.usda"
-                # self._usd_path = "/workspace/omniisaacgymenvs/left_hand_nvfix_110523_fixed_tendon.usda"
-                # self._usd_path = "/workspace/isaac_usd_assets/mujoco_menagerie/shadow_hand/left_hand/left_hand_palmmeshfix_fixed.usda"
-                self._usd_path = "/workspace/isaac_usd_assets/mon_5_june/mujoco_menagerie/shadow_hand/left_hand/left_hand_fixed.usda"
+                # self._usd_path = "/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/left_hand.usd"  # Raw output from isaac mjcf importer
+                self._usd_path = "/workspace/omniisaacgymenvs/sr_assets/partially_fixed_exporter_output/left_hand_fixed.usda"  # isaac mjcf importer output, plus additional info taken from mjcf file and some additional constraints/limits
             else:
-                # self._usd_path = assets_root_path + "/Isaac/Robots/ShadowHand/shadow_hand_instanceable.usd"
-                self._usd_path = "/workspace/omniisaacgymenvs/shadow_hand_instanceable_orig.usda"
+                self._usd_path = "/workspace/omniisaacgymenvs/sr_assets/original_isaac_righthand/shadow_hand_instanceable.usda"
             print(f'final_usd_path: {self._usd_path}')
 
         self._position = torch.tensor([0.0, 0.0, 0.5]) if translation is None else translation
@@ -100,7 +93,7 @@ class ShadowHand(Robot):
 
     def set_motor_control_mode(self, stage, shadow_hand_path):
         if self.mujoco:
-            side = 'lh'
+            side = self._side
             j0_name = 'J2'
             joints_config = {
                              f"{side}_WRJ2": {"stiffness": 5, "damping": 0.5, "max_force": 4.785},

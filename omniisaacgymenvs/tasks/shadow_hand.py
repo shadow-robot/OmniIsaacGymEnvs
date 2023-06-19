@@ -122,7 +122,7 @@ class ShadowHandTask(InHandManipulationTask):
         )
         shadow_hand.set_shadow_hand_properties(stage=self._stage, shadow_hand_prim=shadow_hand.prim)
         shadow_hand.set_motor_control_mode(stage=self._stage, shadow_hand_path=shadow_hand.prim_path)
-        pose_dy, pose_dz = -0.39, 0.10
+        pose_dy, pose_dz = -0.395, 0.10
         return hand_start_translation, pose_dy, pose_dz
     
     def get_hand_view(self, scene):
