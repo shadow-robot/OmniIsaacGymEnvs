@@ -4,7 +4,7 @@
 To create the container run the following:
 
 ```bash
-docker/run_docker_viewer.sh
+docker/run_docker_viewer_add_ros.sh
 ```
 
 Once inside the container, start the task with the following command:
@@ -13,6 +13,13 @@ cd /workspace/omniisaacgymenvs/omniisaacgymenvs
 /isaac-sim/python.sh scripts/rlgames_train.py task=ShadowHand
 ```
 
+To start with the [built in shadow hand](https://github.com/shadow-robot/OmniIsaacGymEnvs/blob/F_slightly_fewer_segfaults_debugging/sr_assets/original_isaac_righthand/shadow_hand_instanceable.usda) (doesn't have any of the issues described below), set an environmental variable called `USE_MUJOCO` to `False` before starting:
+```bash
+cd /workspace/omniisaacgymenvs/omniisaacgymenvs
+USE_MUJOCO=False /isaac-sim/python.sh scripts/rlgames_train.py task=ShadowHand
+```
+
+### Simulation fails
 On two out of three of our machines (one RTX3080, one RTX3090), roughly half of the time we get a segmentation fault:
 ```
 ...
@@ -22,9 +29,13 @@ On two out of three of our machines (one RTX3080, one RTX3090), roughly half of 
 There was an error running python
 ```
 
-On the third machine (also RTX3090) we get a segmentation fault 100% of the time. All three machines are running the same nvidia driver version, same linux kernel version, and have containers created with the same `docker/run_docker_viewer.sh` script.
+On the third machine (also RTX3090) we get a segmentation fault 100% of the time with 64 environments. If we increase to ~4096+ environments, we can start roughly half the time. All three machines are running the same nvidia driver version(`510.108.03`), same linux kernel version (`5.15.0-75-generic`), and have containers created with the same `docker/run_docker_viewer_add_ros.sh` script. Using the [built in shadow hand](https://github.com/shadow-robot/OmniIsaacGymEnvs/blob/F_slightly_fewer_segfaults_debugging/sr_assets/original_isaac_righthand/shadow_hand_instanceable.usda) the simulation starts every time on every machine.
 
-(Note: Object gravity has been disabled to help debug hand movements and simulation starting)
+
+### Memory leak
+
+With the [imported shadow hand](https://github.com/shadow-robot/OmniIsaacGymEnvs/blob/F_slightly_fewer_segfaults_debugging/sr_assets/partially_fixed_exporter_output/left_hand_fixed.usda), using either the `"block"` or `"vive"` object (can be chosen [here](https://github.com/shadow-robot/OmniIsaacGymEnvs/blob/796e5804740c5506f6ae24afa412e67fa97c39e0/omniisaacgymenvs/cfg/task/ShadowHand.yaml#L45)), the simulation leaks GPU memory. This does not happen with the [built in shadow hand](https://github.com/shadow-robot/OmniIsaacGymEnvs/blob/F_slightly_fewer_segfaults_debugging/sr_assets/original_isaac_righthand/shadow_hand_instanceable.usda). Disabling object gravity to stop the object and hand interacting seems to stop the leak (you can pass `no_obj_grav=True` [here](https://github.com/shadow-robot/OmniIsaacGymEnvs/blob/78a914cb22ab91ba20e2fbd4ab0e5385eae65fa1/omniisaacgymenvs/scripts/rlgames_train.py#L115)), or at least GPU memory didn't grow when we checked this by running it for ~ten minutes.
+
 
 ## About this repository
 
