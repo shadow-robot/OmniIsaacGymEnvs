@@ -7,7 +7,6 @@ docker create --name isaac-sim-oige --entrypoint bash -it --gpus all -e "ACCEPT_
 -v /etc/vulkan/implicit_layer.d/nvidia_layers.json:/etc/vulkan/implicit_layer.d/nvidia_layers.json \
 -v /usr/share/glvnd/egl_vendor.d/10_nvidia.json:/usr/share/glvnd/egl_vendor.d/10_nvidia.json \
 -v ${PWD}:/workspace/omniisaacgymenvs \
--v /home/tom/isaac_usd_assets:/workspace/isaac_usd_assets \
 -v ~/docker/isaac-sim/cache/ov:/root/.cache/ov:rw \
 -v ~/docker/isaac-sim/cache/pip:/root/.cache/pip:rw \
 -v ~/docker/isaac-sim/cache/glcache:/root/.cache/nvidia/GLCache:rw \
