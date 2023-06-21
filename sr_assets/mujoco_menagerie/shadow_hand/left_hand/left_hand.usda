@@ -1,0 +1,1124 @@
+#usda 1.0
+(
+    defaultPrim = "left_hand"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def PhysicsScene "physicsScene" (
+    prepend apiSchemas = ["PhysxSceneAPI"]
+)
+{
+    vector3f physics:gravityDirection = (0, 0, -1)
+    float physics:gravityMagnitude = 9.81
+    uniform token physxScene:broadphaseType = "MBP"
+    bool physxScene:enableCCD = 1
+    bool physxScene:enableGPUDynamics = 0
+    bool physxScene:enableStabilization = 1
+    uniform token physxScene:solverType = "TGS"
+}
+
+def Xform "left_hand" (
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "PhysxArticulationAPI"]
+)
+{
+    bool physxArticulation:enabledSelfCollisions = 0
+
+    def Xform "lh_forearm" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI", "PhysicsFilteredPairsAPI"]
+    )
+    {
+        float physics:density = 0
+        prepend rel physics:filteredPairs = [
+            </left_hand/lh_wrist>,
+            </left_hand/lh_thdistal>,
+        ]
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0, 0, 0, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_forearm/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_forearm/visuals>
+        )
+        {
+        }
+    }
+
+    def "joints"
+    {
+        def PhysicsFixedJoint "rootJoint"
+        {
+            rel physics:body1 = </left_hand/lh_forearm>
+        }
+
+        def PhysicsRevoluteJoint "lh_WRJ2" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_forearm>
+            rel physics:body1 = </left_hand/lh_wrist>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, -0.010000005, 0.21301)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.7071068, 0, 0, -0.7071068)
+            quatf physics:localRot1 = (0.7071068, 0, 0, -0.7071068)
+            float physics:lowerLimit = -30.000013
+            float physics:upperLimit = 10.000004
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.5
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_WRJ1" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_wrist>
+            rel physics:body1 = </left_hand/lh_palm>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 7.450581e-9, 0.033999994)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -40.000015
+            float physics:upperLimit = 27.999987
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.5
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_FFJ4" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_palm>
+            rel physics:body1 = </left_hand/lh_ffknuckle>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.032999992, -2.2351742e-8, 0.095)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.7071068, 0, 0, 0.7071068)
+            quatf physics:localRot1 = (0.7071068, 0, 0, 0.7071068)
+            float physics:lowerLimit = -20.000008
+            float physics:upperLimit = 20.000008
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_FFJ3" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_ffknuckle>
+            rel physics:body1 = </left_hand/lh_ffproximal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -14.999978
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_FFJ2" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_FFJ0"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_ffproximal>
+            rel physics:body1 = </left_hand/lh_ffmiddle>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-1.4901161e-8, 2.9802322e-8, 0.044999987)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+            float physxTendon:lh_FFJ0:damping = 0
+            float[] physxTendon:lh_FFJ0:gearing = [1]
+            float physxTendon:lh_FFJ0:restLength = 0
+            float physxTendon:lh_FFJ0:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_FFJ1" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_FFJ0"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_ffmiddle>
+            rel physics:body1 = </left_hand/lh_ffdistal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (1.4901161e-8, -2.9802322e-8, 0.025000006)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+            float[] physxTendon:lh_FFJ0:gearing = [1]
+        }
+
+        def PhysicsRevoluteJoint "lh_MFJ4" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_palm>
+            rel physics:body1 = </left_hand/lh_mfknuckle>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.011000007, -7.450581e-9, 0.09900001)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.7071068, 0, 0, 0.7071068)
+            quatf physics:localRot1 = (0.7071068, 0, 0, 0.7071068)
+            float physics:lowerLimit = -20.000008
+            float physics:upperLimit = 20.000008
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_MFJ3" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_mfknuckle>
+            rel physics:body1 = </left_hand/lh_mfproximal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -14.999978
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_MFJ2" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_MFJ0"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_mfproximal>
+            rel physics:body1 = </left_hand/lh_mfmiddle>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (1.4901161e-8, 0, 0.044999987)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+            float physxTendon:lh_MFJ0:damping = 0
+            float[] physxTendon:lh_MFJ0:gearing = [1]
+            float physxTendon:lh_MFJ0:restLength = 0
+            float physxTendon:lh_MFJ0:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_MFJ1" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_MFJ0"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_mfmiddle>
+            rel physics:body1 = </left_hand/lh_mfdistal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-1.4901161e-8, 0, 0.025000006)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+            float[] physxTendon:lh_MFJ0:gearing = [1]
+        }
+
+        def PhysicsRevoluteJoint "lh_RFJ4" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_palm>
+            rel physics:body1 = </left_hand/lh_rfknuckle>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.0109999925, -7.450581e-9, 0.095)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.7071068, 0, 0, -0.7071068)
+            quatf physics:localRot1 = (0.7071068, 0, 0, -0.7071068)
+            float physics:lowerLimit = -20.000008
+            float physics:upperLimit = 20.000008
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_RFJ3" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_rfknuckle>
+            rel physics:body1 = </left_hand/lh_rfproximal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -14.999978
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_RFJ2" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_RFJ0"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_rfproximal>
+            rel physics:body1 = </left_hand/lh_rfmiddle>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (1.4901161e-8, 0, 0.044999987)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+            float physxTendon:lh_RFJ0:damping = 0
+            float[] physxTendon:lh_RFJ0:gearing = [1]
+            float physxTendon:lh_RFJ0:restLength = 0
+            float physxTendon:lh_RFJ0:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_RFJ1" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_RFJ0"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_rfmiddle>
+            rel physics:body1 = </left_hand/lh_rfdistal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-1.4901161e-8, 0, 0.025000006)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+            float[] physxTendon:lh_RFJ0:gearing = [1]
+        }
+
+        def PhysicsRevoluteJoint "lh_LFJ5" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_palm>
+            rel physics:body1 = </left_hand/lh_lfmetacarpal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0.032999992, 7.450581e-9, 0.020709991)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.8870108, 0, 0.46174878, 0)
+            quatf physics:localRot1 = (0.8870108, 0, 0.46174878, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 44.99999
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_LFJ4" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_lfmetacarpal>
+            rel physics:body1 = </left_hand/lh_lfknuckle>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, 0.06579)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.7071068, 0, 0, -0.7071068)
+            quatf physics:localRot1 = (0.7071068, 0, 0, -0.7071068)
+            float physics:lowerLimit = -20.000008
+            float physics:upperLimit = 20.000008
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_LFJ3" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_lfknuckle>
+            rel physics:body1 = </left_hand/lh_lfproximal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -14.999978
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_LFJ2" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisRootAPI:lh_LFJ0"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_lfproximal>
+            rel physics:body1 = </left_hand/lh_lfmiddle>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, 0.045000017)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+            float physxTendon:lh_LFJ0:damping = 0
+            float[] physxTendon:lh_LFJ0:gearing = [1]
+            float physxTendon:lh_LFJ0:restLength = 0
+            float physxTendon:lh_LFJ0:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_LFJ1" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X", "PhysxTendonAxisAPI:lh_LFJ0"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_lfmiddle>
+            rel physics:body1 = </left_hand/lh_lfdistal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (1.4901161e-8, -2.9802322e-8, 0.025000006)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (1, 0, 0, 0)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+            float[] physxTendon:lh_LFJ0:gearing = [1]
+        }
+
+        def PhysicsRevoluteJoint "lh_THJ5" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_palm>
+            rel physics:body1 = </left_hand/lh_thbase>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (-0.03400001, -0.008580007, 0.028999984)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0, 0.382684, 0, 0.9238794)
+            quatf physics:localRot1 = (0.7071068, 0, -0.7071069, 2.9802322e-8)
+            float physics:lowerLimit = -60.000134
+            float physics:upperLimit = 60.000134
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_THJ4" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_thbase>
+            rel physics:body1 = </left_hand/lh_thproximal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (-4.4703484e-8, 1.4901161e-8, -7.450581e-9, -1)
+            quatf physics:localRot1 = (-4.4703484e-8, 1.4901161e-8, -7.450581e-9, -1)
+            float physics:lowerLimit = 0
+            float physics:upperLimit = 69.99997
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_THJ3" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_thproximal>
+            rel physics:body1 = </left_hand/lh_thhub>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (1.4901161e-8, 0, 0.038000003)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (-4.4703484e-8, 1.4901161e-8, -7.450581e-9, -1)
+            quatf physics:localRot1 = (-4.4703484e-8, 1.4901161e-8, -7.450581e-9, -1)
+            float physics:lowerLimit = -12.000028
+            float physics:upperLimit = 12.000028
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_THJ2" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_thhub>
+            rel physics:body1 = </left_hand/lh_thmiddle>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, 0, 0)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.7071068, 2.9802322e-8, -1.4901161e-8, -0.7071068)
+            quatf physics:localRot1 = (0.7071068, 2.9802322e-8, -1.4901161e-8, -0.7071068)
+            float physics:lowerLimit = -40.000015
+            float physics:upperLimit = 40.000015
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+
+        def PhysicsRevoluteJoint "lh_THJ1" (
+            prepend apiSchemas = ["PhysxJointAPI", "PhysxLimitAPI:X"]
+        )
+        {
+            uniform token physics:axis = "X"
+            rel physics:body0 = </left_hand/lh_thmiddle>
+            rel physics:body1 = </left_hand/lh_thdistal>
+            float physics:breakForce = 3.4028235e38
+            float physics:breakTorque = 3.4028235e38
+            point3f physics:localPos0 = (0, -1.4901161e-8, 0.031999975)
+            point3f physics:localPos1 = (0, 0, 0)
+            quatf physics:localRot0 = (0.70710677, -2.9802322e-8, 2.9802322e-8, -0.7071067)
+            quatf physics:localRot1 = (1, 0, 0, 0)
+            float physics:lowerLimit = -14.999978
+            float physics:upperLimit = 90.000206
+            float physxJoint:armature = 0.0002
+            float physxLimit:X:damping = 0.05
+            float physxLimit:X:stiffness = 0
+        }
+    }
+
+    def Xform "lh_wrist" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI", "PhysicsFilteredPairsAPI"]
+    )
+    {
+        float physics:density = 0
+        prepend rel physics:filteredPairs = [
+            </left_hand/lh_forearm>,
+            </left_hand/lh_thdistal>,
+        ]
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.2130099982023239, 0, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_wrist/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_wrist/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_palm" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI", "PhysicsFilteredPairsAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.2470099925994873, 0, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_palm/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_palm/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_ffknuckle" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.3420099914073944, 0.03299999609589577, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_ffknuckle/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_ffknuckle/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_ffproximal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.3420099914073944, 0.03299999609589577, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_ffproximal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_ffproximal/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_ffmiddle" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.38700997829437256, 0.03299999609589577, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_ffmiddle/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_ffmiddle/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_ffdistal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.41200998425483704, 0.03299999609589577, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_ffdistal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_ffdistal/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_mfknuckle" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.3460099995136261, 0.010999999940395355, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_mfknuckle/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_mfknuckle/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_mfproximal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.3460099995136261, 0.010999999940395355, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_mfproximal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_mfproximal/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_mfmiddle" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.39100998640060425, 0.010999999940395355, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_mfmiddle/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_mfmiddle/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_mfdistal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.4160099923610687, 0.010999999940395355, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_mfdistal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_mfdistal/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_rfknuckle" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.3420099914073944, -0.010999999940395355, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_rfknuckle/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_rfknuckle/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_rfproximal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.3420099914073944, -0.010999999940395355, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_rfproximal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_rfproximal/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_rfmiddle" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.38700997829437256, -0.010999999940395355, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_rfmiddle/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_rfmiddle/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_rfdistal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.41200998425483704, -0.010999999940395355, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_rfdistal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_rfdistal/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_lfmetacarpal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.26771998405456543, -0.032999999821186066, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_lfmetacarpal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_lfmetacarpal/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_lfknuckle" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.33350998163223267, -0.032999999821186066, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_lfknuckle/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_lfknuckle/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_lfproximal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.33350998163223267, -0.032999999821186066, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_lfproximal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_lfproximal/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_lfmiddle" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.3785099983215332, -0.032999999821186066, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_lfmiddle/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_lfmiddle/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_lfdistal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (0, -1, 0, 0), (0, 0, -1, 0), (1, 0, 0, 0), (0.4035100042819977, -0.032999999821186066, 0.01000000536441803, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_lfdistal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_lfdistal/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_thbase" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (-0.70710599005821, 0.7071075619492149, 0, 0), (0, 4.293241318009677e-9, 0.9999999957067587, 0), (0.7071075619492149, 0.7071059943514513, 4.293241318009677e-9, 0), (0.2760099768638611, 0.03400000184774399, 0.018580004572868347, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_thbase/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_thbase/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_thproximal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (-0.70710599005821, 0.7071075619492149, 0, 0), (0, 4.293241318009677e-9, 0.9999999957067587, 0), (0.7071075619492149, 0.7071059943514513, 4.293241318009677e-9, 0), (0.2760099768638611, 0.03400000184774399, 0.018580004572868347, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_thproximal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_thproximal/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_thhub" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI"]
+    )
+    {
+        float physics:density = 0
+        matrix4d xformOp:transform = ( (-0.70710599005821, 0.7071075619492149, 0, 0), (0, 4.293241318009677e-9, 0.9999999957067587, 0), (0.7071075619492149, 0.7071059943514513, 4.293241318009677e-9, 0), (0.30288004875183105, 0.06087002903223038, 0.018580008298158646, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_thhub/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_thhub/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_thmiddle" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI", "PhysicsFilteredPairsAPI"]
+    )
+    {
+        float physics:density = 0
+        prepend rel physics:filteredPairs = </left_hand/lh_thdistal>
+        matrix4d xformOp:transform = ( (-0.70710599005821, 0.7071075619492149, 0, 0), (0, 4.293241318009677e-9, 0.9999999957067587, 0), (0.7071075619492149, 0.7071059943514513, 4.293241318009677e-9, 0), (0.30288004875183105, 0.06087002903223038, 0.018580008298158646, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_thmiddle/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_thmiddle/visuals>
+        )
+        {
+        }
+    }
+
+    def Xform "lh_thdistal" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI", "PhysicsFilteredPairsAPI"]
+    )
+    {
+        float physics:density = 0
+        prepend rel physics:filteredPairs = [
+            </left_hand/lh_forearm>,
+            </left_hand/lh_wrist>,
+            </left_hand/lh_thmiddle>,
+        ]
+        matrix4d xformOp:transform = ( (-2.9172753102102433e-10, 0, -1.0000000002917275, 0), (-0.7071060154739257, 0.7071075470191772, 0, 0), (0.7071075473109047, 0.7071060154739257, -2.9172753102102433e-10, 0), (0.3255074918270111, 0.08349741995334625, 0.018580006435513496, 1) )
+        uniform token[] xformOpOrder = ["xformOp:transform"]
+
+        def "collisions" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_thdistal/collisions>
+        )
+        {
+        }
+
+        def "visuals" (
+            instanceable = true
+            prepend references = @/workspace/omniisaacgymenvs/sr_assets/mujoco_menagerie/shadow_hand/left_hand/instanceable_meshes.usd@</left_hand/lh_thdistal/visuals>
+        )
+        {
+        }
+    }
+}
+
