@@ -112,7 +112,7 @@ def parse_hydra_configs(cfg: DictConfig):
     cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
     cfg_dict['seed'] = cfg.seed
     time.sleep(5)
-    task = initialize_task(cfg_dict, env)
+    task = initialize_task(cfg_dict, env, no_obj_grav=False)
     time.sleep(5)
     if cfg.wandb_activate and rank == 0:
         # Make sure to install WandB if you actually use this.
