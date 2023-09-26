@@ -26,6 +26,8 @@ env:
   resetDofPosRandomInterval: 0.2
   resetDofVelRandomInterval: 0.0
 
+  num_success_hold_steps: 10
+
  # Random forces applied to the object
   forceScale: 1.0
   forceProbRange: [0.001, 0.1]
@@ -42,7 +44,7 @@ env:
   fallPenalty: -50.0
   velObsScale: 0.2
  
-  objectType: "block"
+  objectType: "vive"  # "block"
   observationType: "openai" # can be "full_no_vel", "full", "openai", "full_state"
   asymmetric_observations: True
   successTolerance: 0.4
@@ -78,8 +80,9 @@ sim:
     friction_correlation_distance: 0.025
     enable_sleeping: True
     enable_stabilization: True
-    # GPU buffers
-    gpu_max_rigid_contact_count: 1048576
+    # GPU buffers 
+    # gpu_max_rigid_contact_count: 1101004  # 1050338  # 1049212  # 1048576
+    gpu_max_rigid_contact_count: 1258291  # 1050338  # 1049212  # 1048576
     gpu_max_rigid_patch_count: 33554432
     gpu_found_lost_pairs_capacity: 20971520
     gpu_found_lost_aggregate_pairs_capacity: 20971520
