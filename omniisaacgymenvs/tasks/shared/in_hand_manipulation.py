@@ -104,6 +104,8 @@ class InHandManipulationTask(RLTask):
         self.av_factor = torch.tensor(self.av_factor, dtype=torch.float, device=self.device)
         self.total_successes = 0
         self.total_resets = 0
+        self._last_actions = torch.zeros((self.num_envs, self._num_actions), dtype=torch.float, device=self.device)
+        self.actions = torch.zeros_like(self._last_actions, dtype=torch.float, device=self.device)
         return
     
     def set_up_scene(self, scene) -> None:
@@ -233,10 +235,11 @@ class InHandManipulationTask(RLTask):
         self.object_angvel = self.object_velocities[:, 3:6]
     
     def calculate_metrics(self):
+        action_diff = (self.actions - self._last_actions)
         self.rew_buf[:], self.reset_buf[:], self.reset_goal_buf[:], self.progress_buf[:], self.hold_count_buf[:], self.successes[:], self.consecutive_successes[:] = compute_hand_reward(
             self.rew_buf, self.reset_buf, self.reset_goal_buf, self.progress_buf, self.hold_count_buf, self.successes, self.consecutive_successes,
             self.max_episode_length, self.object_pos, self.object_rot, self.goal_pos, self.goal_rot,
-            self.dist_reward_scale, self.rot_reward_scale, self.rot_eps, self.actions, self.action_penalty_scale,
+            self.dist_reward_scale, self.rot_reward_scale, self.rot_eps, action_diff, self.action_penalty_scale,
             self.success_tolerance, self.reach_goal_bonus, self.fall_dist, self.fall_penalty,
             self.max_consecutive_successes, self.av_factor, self.num_success_hold_steps
         )
@@ -270,6 +273,7 @@ class InHandManipulationTask(RLTask):
         if len(env_ids) > 0:
             self.reset_idx(env_ids)
 
+        self._last_actions = self.actions.clone()
         self.actions = actions.clone().to(self.device)
 
         if self.use_relative_control:
