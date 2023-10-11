@@ -70,6 +70,12 @@ sim:
     dynamic_friction: 1.0
     restitution: 0.0
 
+  default_physics_material: 
+    static_friction: 1.0
+    dynamic_friction: 1.0
+    restitution: 0.0
+
+
   physx:
     # per-scene
     use_gpu: ${eq:${....sim_device},"gpu"} # set to False to run on CPU
@@ -175,7 +181,7 @@ domain_randomization:
             num_buckets: 250
             operation: "scaling"
             distribution: "uniform"
-            distribution_parameters: [[0.7, 1, 1], [1.3, 1, 1]]
+            distribution_parameters: [[0.7, 0.8, 0.0], [1.3, 1.2, 0.0]]
         scale:
           on_startup:
             operation: "scaling"
