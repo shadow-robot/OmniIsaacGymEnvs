@@ -56,12 +56,13 @@ class ShadowHandTask(InHandManipulationTask):
         assert self.object_type in ["block"]
 
         self.obs_type = self._task_cfg["env"]["observationType"]
-        if not (self.obs_type in ["openai", "full_no_vel", "full", "full_state"]):
+        if not (self.obs_type in ["openai", "full_no_vel", "full", "full_state", "openai_ft"]):
             raise Exception(
                 "Unknown type of observations!\nobservationType should be one of: [openai, full_no_vel, full, full_state]")
         print("Obs type:", self.obs_type)
         self.num_obs_dict = {
             "openai": 42,
+            "openai_ft": 72,
             "full_no_vel": 77,
             "full": 157,
             "full_state": 187,
@@ -78,6 +79,8 @@ class ShadowHandTask(InHandManipulationTask):
         self.force_torque_obs_scale = 10.0
 
         num_states = 0
+        if self.obs_type == "openai_ft":
+            num_states = 72
         if self.asymmetric_obs:
             num_states = 187
 
@@ -123,11 +126,13 @@ class ShadowHandTask(InHandManipulationTask):
         self.hand_dof_pos = self._hands.get_joint_positions(clone=False)
         self.hand_dof_vel = self._hands.get_joint_velocities(clone=False)
 
-        if self.obs_type == "full_state" or self.asymmetric_obs:
+        if self.obs_type == "full_state" or self.asymmetric_obs or self.obs_type == "openai_ft":
             self.vec_sensor_tensor = self._hands._physics_view.get_force_sensor_forces().reshape(self.num_envs, 6*self.num_fingertips)
 
         if self.obs_type == "openai":
             self.compute_fingertip_observations(True)
+        elif self.obs_type == "openai_ft":
+            self.compute_fingertip_observations_ft(True)
         elif self.obs_type == "full_no_vel":
             self.compute_full_observations(True)
         elif self.obs_type == "full":
@@ -177,6 +182,38 @@ class ShadowHandTask(InHandManipulationTask):
             self.obs_buf[:, 81:85] = self.goal_rot
             self.obs_buf[:, 85:89] = quat_mul(self.object_rot, quat_conjugate(self.goal_rot))
             self.obs_buf[:, 89:109] = self.actions
+
+    def compute_fingertip_observations_ft(self, no_vel=False):
+        if no_vel:
+            # Per https://arxiv.org/pdf/1808.00177.pdf Table 2
+            #   Fingertip positions
+            #   Object Position, but not orientation
+            #   Relative target orientation
+
+            # 3*self.num_fingertips = 15
+            self.obs_buf[:, 0:15] = self.fingertip_pos.reshape(self.num_envs, 15)
+            self.obs_buf[:, 15:18] = self.object_pos
+            self.obs_buf[:, 18:22] = quat_mul(self.object_rot, quat_conjugate(self.goal_rot))
+            self.obs_buf[:, 22:52] = self.force_torque_obs_scale * self.vec_sensor_tensor
+            self.obs_buf[:, 52:72] = self.actions
+        else:
+            # 13*self.num_fingertips = 65
+            self.obs_buf[:, 0:65] = self.fingertip_state.reshape(self.num_envs, 65)
+
+            self.obs_buf[:, 0:15] = self.fingertip_pos.reshape(self.num_envs, 3*self.num_fingertips)
+            self.obs_buf[:, 15:35] = self.fingertip_rot.reshape(self.num_envs, 4*self.num_fingertips)
+            self.obs_buf[:, 35:65] = self.fingertip_velocities.reshape(self.num_envs, 6*self.num_fingertips)
+
+            self.obs_buf[:, 65:68] = self.object_pos
+            self.obs_buf[:, 68:72] = self.object_rot
+            self.obs_buf[:, 72:75] = self.object_linvel
+            self.obs_buf[:, 75:78] = self.vel_obs_scale * self.object_angvel
+
+            self.obs_buf[:, 78:81] = self.goal_pos
+            self.obs_buf[:, 81:85] = self.goal_rot
+            self.obs_buf[:, 85:89] = quat_mul(self.object_rot, quat_conjugate(self.goal_rot))
+            self.obs_buf[:, 89:119] = self.force_torque_obs_scale * self.vec_sensor_tensor
+            self.obs_buf[:, 119:139] = self.actions
 
 
     def compute_full_observations(self, no_vel=False):
