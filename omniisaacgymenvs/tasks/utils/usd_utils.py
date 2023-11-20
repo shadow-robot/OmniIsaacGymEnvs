@@ -27,7 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from omni.isaac.core.utils.prims import get_prim_at_path
+from omni.isaac.core.utils.prims import get_prim_at_path, get_all_matching_child_prims, get_prim_children
 from omni.isaac.core.utils.stage import get_current_stage
 from pxr import UsdLux, UsdPhysics
 

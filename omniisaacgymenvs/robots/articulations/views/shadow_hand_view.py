@@ -32,6 +32,7 @@ from typing import Optional
 import torch
 from omni.isaac.core.articulations import ArticulationView
 from omni.isaac.core.prims import RigidPrimView
+from omni.isaac.core.utils.prims import get_prim_at_path, get_all_matching_child_prims, get_prim_children
 
 
 class ShadowHandView(ArticulationView):
@@ -40,11 +41,18 @@ class ShadowHandView(ArticulationView):
         prim_paths_expr: str,
         name: Optional[str] = "ShadowHandView",
     ) -> None:
-
+        self.mujoco = True
+        if not self.mujoco:
+            self._hand_joint_prefix = 'robot0'
+            prim_paths_expr = "/World/envs/.*/shadow_hand/robot0.*distal"
+        else:
+            self._side = 'rh'
+            self._hand_joint_prefix = f'{self._side}'
+            prim_paths_expr = f"/World/envs/.*/right_hand/rh_forearm/{self._side}.*distal"
         super().__init__(prim_paths_expr=prim_paths_expr, name=name, reset_xform_properties=False)
 
         self._fingers = RigidPrimView(
-            prim_paths_expr="/World/envs/.*/shadow_hand/robot0.*distal",
+            prim_paths_expr=prim_paths_expr,
             name="finger_view",
             reset_xform_properties=False,
         )
@@ -55,29 +63,53 @@ class ShadowHandView(ArticulationView):
 
     def initialize(self, physics_sim_view):
         super().initialize(physics_sim_view)
-
-        self.actuated_joint_names = [
-            "robot0_WRJ1",
-            "robot0_WRJ0",
-            "robot0_FFJ3",
-            "robot0_FFJ2",
-            "robot0_FFJ1",
-            "robot0_MFJ3",
-            "robot0_MFJ2",
-            "robot0_MFJ1",
-            "robot0_RFJ3",
-            "robot0_RFJ2",
-            "robot0_RFJ1",
-            "robot0_LFJ4",
-            "robot0_LFJ3",
-            "robot0_LFJ2",
-            "robot0_LFJ1",
-            "robot0_THJ4",
-            "robot0_THJ3",
-            "robot0_THJ2",
-            "robot0_THJ1",
-            "robot0_THJ0",
-        ]
+        if not self.mujoco:
+            self.actuated_joint_names = [
+                f"{self._hand_joint_prefix}_WRJ1",
+                f"{self._hand_joint_prefix}_WRJ0",
+                f"{self._hand_joint_prefix}_FFJ3",
+                f"{self._hand_joint_prefix}_FFJ2",
+                f"{self._hand_joint_prefix}_FFJ1",
+                f"{self._hand_joint_prefix}_MFJ3",
+                f"{self._hand_joint_prefix}_MFJ2",
+                f"{self._hand_joint_prefix}_MFJ1",
+                f"{self._hand_joint_prefix}_RFJ3",
+                f"{self._hand_joint_prefix}_RFJ2",
+                f"{self._hand_joint_prefix}_RFJ1",
+                f"{self._hand_joint_prefix}_LFJ4",
+                f"{self._hand_joint_prefix}_LFJ3",
+                f"{self._hand_joint_prefix}_LFJ2",
+                f"{self._hand_joint_prefix}_LFJ1",
+                f"{self._hand_joint_prefix}_THJ4",
+                f"{self._hand_joint_prefix}_THJ3",
+                f"{self._hand_joint_prefix}_THJ2",
+                f"{self._hand_joint_prefix}_THJ1",
+                f"{self._hand_joint_prefix}_THJ0",
+            ]
+        else:
+            j0_name = 'J2'
+            self.actuated_joint_names = [
+                f"{self._hand_joint_prefix}_WRJ2",
+                f"{self._hand_joint_prefix}_WRJ1",
+                f"{self._hand_joint_prefix}_FFJ4",
+                f"{self._hand_joint_prefix}_FFJ3",
+                f"{self._hand_joint_prefix}_FF{j0_name}",
+                f"{self._hand_joint_prefix}_MFJ4",
+                f"{self._hand_joint_prefix}_MFJ3",
+                f"{self._hand_joint_prefix}_MF{j0_name}",
+                f"{self._hand_joint_prefix}_RFJ4",
+                f"{self._hand_joint_prefix}_RFJ3",
+                f"{self._hand_joint_prefix}_RF{j0_name}",
+                f"{self._hand_joint_prefix}_LFJ5",
+                f"{self._hand_joint_prefix}_LFJ4",
+                f"{self._hand_joint_prefix}_LFJ3",
+                f"{self._hand_joint_prefix}_LF{j0_name}",
+                f"{self._hand_joint_prefix}_THJ5",
+                f"{self._hand_joint_prefix}_THJ4",
+                f"{self._hand_joint_prefix}_THJ3",
+                f"{self._hand_joint_prefix}_THJ2",
+                f"{self._hand_joint_prefix}_THJ1",
+            ]
         self._actuated_dof_indices = list()
         for joint_name in self.actuated_joint_names:
             self._actuated_dof_indices.append(self.get_dof_index(joint_name))
@@ -87,6 +119,10 @@ class ShadowHandView(ArticulationView):
         damping = torch.tensor([0.1] * self.num_fixed_tendons, device=self._device)
         self.set_fixed_tendon_properties(dampings=damping, limit_stiffnesses=limit_stiffness)
 
-        fingertips = ["robot0_ffdistal", "robot0_mfdistal", "robot0_rfdistal", "robot0_lfdistal", "robot0_thdistal"]
+        fingertips = [f"{self._hand_joint_prefix}_ffdistal",
+                      f"{self._hand_joint_prefix}_mfdistal",
+                      f"{self._hand_joint_prefix}_rfdistal",
+                      f"{self._hand_joint_prefix}_lfdistal",
+                      f"{self._hand_joint_prefix}_thdistal"]
         self._sensor_indices = torch.tensor([self._body_indices[j] for j in fingertips], device=self._device, dtype=torch.long)
 
