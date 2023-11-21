@@ -42,6 +42,8 @@ class ShadowHandView(ArticulationView):
         prim_paths_expr: str,
         name: Optional[str] = "ShadowHandView",
     ) -> None:
+        super().__init__(prim_paths_expr=prim_paths_expr, name=name, reset_xform_properties=False)
+
         mujoco_env_str = os.environ.get('USE_MUJOCO')
         if mujoco_env_str is None:
             self.mujoco = True
@@ -56,7 +58,6 @@ class ShadowHandView(ArticulationView):
             self._side = 'rh'
             self._hand_joint_prefix = f'{self._side}'
             prim_paths_expr = f"/World/envs/.*/right_hand/rh_forearm/{self._side}.*distal"
-        super().__init__(prim_paths_expr=prim_paths_expr, name=name, reset_xform_properties=False)
 
         self._fingers = RigidPrimView(
             prim_paths_expr=prim_paths_expr,

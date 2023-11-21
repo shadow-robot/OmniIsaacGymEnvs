@@ -132,7 +132,7 @@ class ShadowHandTask(InHandManipulationTask):
 
     def get_hand_view(self, scene):
         if self.mujoco:
-            prim_paths_expr = f"/World/envs/.*/right_hand"
+            prim_paths_expr = f"/World/envs/.*/right_hand/rh_forearm"
         else:
             prim_paths_expr = "/World/envs/.*/shadow_hand"
         hand_view = ShadowHandView(prim_paths_expr=prim_paths_expr, name="shadow_hand_view")
