@@ -144,7 +144,7 @@ class ShadowHand(Robot):
         for joint_name, config in joints_config.items():
             print(f'########### setting {joint_name}')
             if self.mujoco:
-                joints_prim_path = f"{self.prim_path}/rh_forearm/joints/{joint_name}"
+                joints_prim_path = f"{self.prim_path}/rh_forearm/joints"
             else:
                 joints_prim_path = f"{self.prim_path}/joints"
             set_drive(
