@@ -37,7 +37,8 @@ from omniisaacgymenvs.tasks.base.rl_task import RLTask
 from omniisaacgymenvs.robots.articulations.shadow_hand import ShadowHand
 from omniisaacgymenvs.robots.articulations.views.shadow_hand_view import ShadowHandView
 from omniisaacgymenvs.tasks.shared.in_hand_manipulation import InHandManipulationTask
-
+import os
+os.environ["USE_MUJOCO"] = "false"
 
 class ShadowHandTask(InHandManipulationTask):
     def __init__(self, name, sim_config, env, offset=None) -> None:
@@ -71,7 +72,14 @@ class ShadowHandTask(InHandManipulationTask):
         self.use_vel_obs = False
 
         self.fingertip_obs = True
-        self.mujoco = True
+        mujoco_env_str = os.environ.get('USE_MUJOCO')
+        
+        if mujoco_env_str is None:
+            self.mujoco = True
+        elif 'true' in mujoco_env_str.lower():
+            self.mujoco = True
+        elif 'false' in mujoco_env_str.lower():
+            self.mujoco = False
         if not self.mujoco:
             self._hand_joint_prefix = 'robot0:'
         else:

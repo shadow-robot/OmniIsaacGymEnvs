@@ -33,7 +33,8 @@ import torch
 from omni.isaac.core.articulations import ArticulationView
 from omni.isaac.core.prims import RigidPrimView
 from omni.isaac.core.utils.prims import get_prim_at_path, get_all_matching_child_prims, get_prim_children
-
+import os
+os.environ["USE_MUJOCO"] = "false"
 
 class ShadowHandView(ArticulationView):
     def __init__(
@@ -41,7 +42,13 @@ class ShadowHandView(ArticulationView):
         prim_paths_expr: str,
         name: Optional[str] = "ShadowHandView",
     ) -> None:
-        self.mujoco = True
+        mujoco_env_str = os.environ.get('USE_MUJOCO')
+        if mujoco_env_str is None:
+            self.mujoco = True
+        elif 'true' in mujoco_env_str.lower():
+            self.mujoco = True
+        elif 'false' in mujoco_env_str.lower():
+            self.mujoco = False
         if not self.mujoco:
             self._hand_joint_prefix = 'robot0'
             prim_paths_expr = "/World/envs/.*/shadow_hand/robot0.*distal"

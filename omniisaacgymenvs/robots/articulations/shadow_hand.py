@@ -37,7 +37,8 @@ from omni.isaac.core.utils.nucleus import get_assets_root_path
 from omni.isaac.core.utils.stage import add_reference_to_stage
 from omniisaacgymenvs.tasks.utils.usd_utils import set_drive
 from pxr import Gf, PhysxSchema, Sdf, Usd, UsdGeom, UsdPhysics
-
+import os
+os.environ["USE_MUJOCO"] = "false"
 
 class ShadowHand(Robot):
     def __init__(
@@ -51,7 +52,14 @@ class ShadowHand(Robot):
 
         self._usd_path = usd_path
         self._name = name
-        self.mujoco = True
+        mujoco_env_str = os.environ.get('USE_MUJOCO')
+        self._side = 'rh'
+        if mujoco_env_str is None:
+            self.mujoco = True
+        elif 'true' in mujoco_env_str.lower():
+            self.mujoco = True
+        elif 'false' in mujoco_env_str.lower():
+            self.mujoco = False
 
         if self._usd_path is None:
             if not self.mujoco:
@@ -135,8 +143,12 @@ class ShadowHand(Robot):
 
         for joint_name, config in joints_config.items():
             print(f'########### setting {joint_name}')
+            if self.mujoco:
+                joints_prim_path = f"{self.prim_path}/rh_forearm/joints/{joint_name}"
+            else:
+                joints_prim_path = f"{self.prim_path}/joints"
             set_drive(
-                f"{self.prim_path}/rh_forearm/joints/{joint_name}",
+                f"{joints_prim_path}/{joint_name}",
                 "angular",
                 "position",
                 0.0,
