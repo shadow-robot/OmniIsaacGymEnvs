@@ -72,7 +72,7 @@ class ShadowHandTask(InHandManipulationTask):
 
         self.fingertip_obs = True
         self.mujoco = True
-        if self.mujoco:
+        if not self.mujoco:
             self._hand_joint_prefix = 'robot0:'
         else:
             self._side = 'rh'
