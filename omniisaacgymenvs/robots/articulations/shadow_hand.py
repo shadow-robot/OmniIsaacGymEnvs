@@ -38,7 +38,7 @@ from omni.isaac.core.utils.stage import add_reference_to_stage
 from omniisaacgymenvs.tasks.utils.usd_utils import set_drive
 from pxr import Gf, PhysxSchema, Sdf, Usd, UsdGeom, UsdPhysics
 import os
-os.environ["USE_MUJOCO"] = "false"
+os.environ["USE_MUJOCO"] = "true"
 
 class ShadowHand(Robot):
     def __init__(

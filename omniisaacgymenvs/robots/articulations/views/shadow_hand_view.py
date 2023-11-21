@@ -34,7 +34,7 @@ from omni.isaac.core.articulations import ArticulationView
 from omni.isaac.core.prims import RigidPrimView
 from omni.isaac.core.utils.prims import get_prim_at_path, get_all_matching_child_prims, get_prim_children
 import os
-os.environ["USE_MUJOCO"] = "false"
+os.environ["USE_MUJOCO"] = "true"
 
 class ShadowHandView(ArticulationView):
     def __init__(

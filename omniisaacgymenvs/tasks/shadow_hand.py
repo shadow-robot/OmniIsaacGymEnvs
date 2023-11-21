@@ -38,7 +38,7 @@ from omniisaacgymenvs.robots.articulations.shadow_hand import ShadowHand
 from omniisaacgymenvs.robots.articulations.views.shadow_hand_view import ShadowHandView
 from omniisaacgymenvs.tasks.shared.in_hand_manipulation import InHandManipulationTask
 import os
-os.environ["USE_MUJOCO"] = "false"
+os.environ["USE_MUJOCO"] = "true"
 
 class ShadowHandTask(InHandManipulationTask):
     def __init__(self, name, sim_config, env, offset=None) -> None:
