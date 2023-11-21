@@ -171,6 +171,13 @@ class ShadowHandTask(InHandManipulationTask):
             self.compute_full_state(True)
 
         observations = {self._hands.name: {"obs_buf": self.obs_buf}}
+        nans = torch.isnan(self.obs_buf).nonzero()
+        if nans.shape[0] != 0:
+            print('####################')
+            print(f'obs nans: {nans}')
+            for x in nans:
+                print(x)
+            a=1
         return observations
 
     def compute_fingertip_observations(self, no_vel=False):
