@@ -80,11 +80,15 @@ class ShadowHandTask(InHandManipulationTask):
             self.mujoco = True
         elif 'false' in mujoco_env_str.lower():
             self.mujoco = False
-        if not self.mujoco:
-            self._hand_joint_prefix = 'robot0:'
+
+        if self.mujoco:
+            self.hand_name = 'right_hand'
+            side = 'rh'
+            self._hand_joint_prefix = f'{side}_'
         else:
-            self._side = 'rh'
-            self._hand_joint_prefix = f'{self._side}_'
+            self.hand_name = 'shadow_hand'
+            self._hand_joint_prefix = 'robot0:'
+
         self.fingertips = [
             f"{self._hand_joint_prefix}ffdistal",
             f"{self._hand_joint_prefix}mfdistal",
@@ -112,28 +116,23 @@ class ShadowHandTask(InHandManipulationTask):
         self.pose_dy, self.pose_dz = -0.39, 0.10
 
     def get_hand(self):
-        if self.mujoco:
-            hand_name = 'right_hand'
-        else:
-            hand_name = 'shadow_hand'
         shadow_hand = ShadowHand(
-            prim_path=self.default_zero_env_path + f"/{hand_name}",
-            name=hand_name,
+            prim_path=self.default_zero_env_path + f"/{self.hand_name}",
+            name=self.hand_name,
             translation=self.hand_start_translation,
             orientation=self.hand_start_orientation,
         )
         self._sim_config.apply_articulation_settings(
-            f"{hand_name}",
+            f"{self.hand_name}",
             get_prim_at_path(shadow_hand.prim_path),
-            self._sim_config.parse_actor_config(f"{hand_name}"),
+            self._sim_config.parse_actor_config(f"{self.hand_name}"),
         )
         shadow_hand.set_shadow_hand_properties(stage=self._stage, shadow_hand_prim=shadow_hand.prim)
         shadow_hand.set_motor_control_mode(stage=self._stage, shadow_hand_path=shadow_hand.prim_path)
 
     def get_hand_view(self, scene):
         if self.mujoco:
-            self._side = 'rh'
-            prim_paths_expr = f"/World/envs/.*/right_hand/rh_forearm/{self._side}_*distal"
+            prim_paths_expr = f"/World/envs/.*/right_hand"
         else:
             prim_paths_expr = "/World/envs/.*/shadow_hand"
         hand_view = ShadowHandView(prim_paths_expr=prim_paths_expr, name="shadow_hand_view")

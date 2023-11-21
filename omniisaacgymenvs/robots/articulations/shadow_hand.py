@@ -140,13 +140,13 @@ class ShadowHand(Robot):
                 "robot0_THJ1": {"stiffness": 1, "damping": 0.1, "max_force": 0.99},
                 "robot0_THJ0": {"stiffness": 1, "damping": 0.1, "max_force": 0.81},
             }
+        if self.mujoco:
+            joints_prim_path = f"{self.prim_path}/rh_forearm/joints"
+        else:
+            joints_prim_path = f"{self.prim_path}/joints"
 
         for joint_name, config in joints_config.items():
             print(f'########### setting {joint_name}')
-            if self.mujoco:
-                joints_prim_path = f"{self.prim_path}/rh_forearm/joints"
-            else:
-                joints_prim_path = f"{self.prim_path}/joints"
             set_drive(
                 f"{joints_prim_path}/{joint_name}",
                 "angular",
