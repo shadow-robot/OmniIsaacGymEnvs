@@ -26,6 +26,8 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import os
+os.environ["USE_MUJOCO"] = "false"
 
 import numpy as np
 import torch
@@ -40,6 +42,15 @@ from omniisaacgymenvs.envs.vec_env_rlgames import VecEnvRLGames
 
 import rospy
 from std_msgs.msg import Float32, Int16, String
+
+@torch.jit.script
+def scale(x, lower, upper):
+    return (0.5 * (x + 1.0) * (upper - lower) + lower)
+
+
+@torch.jit.script
+def unscale(x, lower, upper):
+    return (2.0 * x - upper - lower) / (upper - lower)
 
 
 def name_cb(msg, _params_dict):
@@ -69,7 +80,7 @@ def parse_hydra_configs(cfg: DictConfig):
     params_dict['joint_names'] = []
     params_dict['joint_name'] = 'all'
 
-    rospy.init_node('a')
+    rospy.init_node('assss')
     name_sub = rospy.Subscriber('/joint_name', String, name_cb, (params_dict))
     val_sub = rospy.Subscriber('/joint_value', Float32, val_cb, (params_dict))
 
@@ -85,7 +96,7 @@ def parse_hydra_configs(cfg: DictConfig):
     from omni.isaac.core.utils.torch.maths import set_seed
     cfg.seed = set_seed(cfg.seed, torch_deterministic=cfg.torch_deterministic)
     cfg_dict['seed'] = cfg.seed
-    task = initialize_task(cfg_dict, env)
+    task = initialize_task(cfg_dict, env, no_obj_grav=True)
     first_loop = True
     params_dict['joint_names'] = env._task._hands.actuated_joint_names
 
@@ -102,7 +113,12 @@ def parse_hydra_configs(cfg: DictConfig):
                 action_tensor[:, :] = params_dict['joint_value']
             else:
                 if params_dict['changed']:
-                    params_dict['joint_id'] = env._task._hands.get_dof_index(params_dict['joint_name'])
+                    # params_dict['joint_id'] = env._task._hands.get_dof_index(params_dict['joint_name'])
+                    try:
+                        params_dict['joint_id'] = env._task._hands.actuated_dof_indices.index(env._task._hands.get_dof_index(params_dict['joint_name']))
+                    except ValueError:
+                        print(f'joint name: {params_dict["joint_name"]} not found')
+                        params_dict['joint_id'] = -1
                     print(
                         f'joint name: {params_dict["joint_name"]}'
                         f'\tid: {params_dict["joint_id"]}'
@@ -110,6 +126,9 @@ def parse_hydra_configs(cfg: DictConfig):
                     params_dict['changed'] = False
                 action_tensor[:, params_dict['joint_id']] = params_dict['joint_value']
             actions = torch.tensor(action_tensor, device=task.rl_device)
+            actions = unscale(actions,
+                        env._task.hand_dof_lower_limits[env._task._hands.actuated_dof_indices],
+                        env._task.hand_dof_upper_limits[env._task._hands.actuated_dof_indices])
             env._task.pre_physics_step(actions)
             env._world.step(render=render)
             env.sim_frame_count += 1
