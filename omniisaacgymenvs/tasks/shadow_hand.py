@@ -173,11 +173,11 @@ class ShadowHandTask(InHandManipulationTask):
         observations = {self._hands.name: {"obs_buf": self.obs_buf}}
         nans = torch.isnan(self.obs_buf).nonzero()
         if nans.shape[0] != 0:
-            print('####################')
+            print('NaN(s) detected in input observation space, this is generally caused by simulation instabilities. '
+                  'Please check your input HAND_MODEL file')
             print(f'obs nans: {nans}')
             for x in nans:
                 print(x)
-            a=1
         return observations
 
     def compute_fingertip_observations(self, no_vel=False):
