@@ -69,7 +69,7 @@ class ShadowHand(Robot):
                 self._usd_path = assets_root_path + "/Isaac/Robots/ShadowHand/shadow_hand_instanceable.usd"
             else:
                 self._side = 'rh'
-                self._usd_path = "/workspace/omniisaacgymenvs/mujoco_menagerie/shadow_hand/right_hand/right_hand.usd"
+                self._usd_path = "/workspace/omniisaacgymenvs/mujoco_menagerie/shadow_hand/right_hand/right_hand_fixed.usda"
         print(f'###### final usd path: {self._usd_path}')
         self._position = torch.tensor([0.0, 0.0, 0.5]) if translation is None else translation
         self._orientation = torch.tensor([1.0, 0.0, 0.0, 0.0]) if orientation is None else orientation
