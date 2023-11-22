@@ -75,6 +75,12 @@ sim:
     dynamic_friction: 1.0
     restitution: 0.3
 
+  default_physics_material: 
+    static_friction: 1.0
+    dynamic_friction: 1.0
+    restitution: 0.0
+
+
   physx:
     # per-scene
     use_gpu: ${eq:${....sim_device},"gpu"} # set to False to run on CPU
