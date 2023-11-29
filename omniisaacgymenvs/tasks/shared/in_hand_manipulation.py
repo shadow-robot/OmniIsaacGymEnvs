@@ -52,6 +52,7 @@ class InHandManipulationTask(RLTask):
         self.z_unit_tensor = torch.tensor([0, 0, 1], dtype=torch.float, device=self.device).repeat((self.num_envs, 1))
 
         self.reset_goal_buf = self.reset_buf.clone()
+        self.hold_count_buf = self.progress_buf.clone()
         self.successes = torch.zeros(self.num_envs, dtype=torch.float, device=self.device)
         self.consecutive_successes = torch.zeros(1, dtype=torch.float, device=self.device)
         self.randomization_buf = torch.zeros(self.num_envs, dtype=torch.long, device=self.device)
@@ -78,6 +79,8 @@ class InHandManipulationTask(RLTask):
         self.reset_rotation_noise = self._task_cfg["env"]["resetRotationNoise"]
         self.reset_dof_pos_noise = self._task_cfg["env"]["resetDofPosRandomInterval"]
         self.reset_dof_vel_noise = self._task_cfg["env"]["resetDofVelRandomInterval"]
+
+        self.num_success_hold_steps = self._task_cfg["env"].get("num_success_hold_steps", 1)
 
         self.hand_dof_speed_scale = self._task_cfg["env"]["dofSpeedScale"]
         self.use_relative_control = self._task_cfg["env"]["useRelativeControl"]
@@ -270,6 +273,7 @@ class InHandManipulationTask(RLTask):
             self.reset_buf[:],
             self.reset_goal_buf[:],
             self.progress_buf[:],
+            self.hold_count_buf[:],
             self.successes[:],
             self.consecutive_successes[:],
         ) = compute_hand_reward(
@@ -277,6 +281,7 @@ class InHandManipulationTask(RLTask):
             self.reset_buf,
             self.reset_goal_buf,
             self.progress_buf,
+            self.hold_count_buf,
             self.successes,
             self.consecutive_successes,
             self.max_episode_length,
@@ -295,6 +300,7 @@ class InHandManipulationTask(RLTask):
             self.fall_penalty,
             self.max_consecutive_successes,
             self.av_factor,
+            self.num_success_hold_steps,
         )
 
         self.extras["consecutive_successes"] = self.consecutive_successes.mean()
@@ -443,6 +449,7 @@ class InHandManipulationTask(RLTask):
         self.progress_buf[env_ids] = 0
         self.reset_buf[env_ids] = 0
         self.successes[env_ids] = 0
+        self.hold_count_buf[env_ids] = 0
 
 
 #####################################################################
@@ -463,6 +470,7 @@ def compute_hand_reward(
     reset_buf,
     reset_goal_buf,
     progress_buf,
+    hold_count_buf,
     successes,
     consecutive_successes,
     max_episode_length: float,
@@ -481,6 +489,7 @@ def compute_hand_reward(
     fall_penalty: float,
     max_consecutive_successes: int,
     av_factor: float,
+    num_success_hold_steps: int,
 ):
 
     goal_dist = torch.norm(object_pos - target_pos, p=2, dim=-1)
@@ -500,7 +509,11 @@ def compute_hand_reward(
     reward = dist_rew + rot_rew + action_penalty * action_penalty_scale
 
     # Find out which envs hit the goal and update successes count
-    goal_resets = torch.where(torch.abs(rot_dist) <= success_tolerance, torch.ones_like(reset_goal_buf), reset_goal_buf)
+    # goal_resets = torch.where(torch.abs(rot_dist) <= success_tolerance, torch.ones_like(reset_goal_buf), reset_goal_buf)
+    goal_reached = torch.where(torch.abs(rot_dist) <= success_tolerance, torch.ones_like(reset_goal_buf), reset_goal_buf)
+    hold_count_buf = torch.where(goal_reached == 1, hold_count_buf + 1, torch.zeros_like(goal_reached))
+
+    goal_resets = torch.where(hold_count_buf > num_success_hold_steps, torch.ones_like(reset_goal_buf), reset_goal_buf)
     successes = successes + goal_resets
 
     # Success bonus: orientation is within `success_tolerance` of goal orientation
@@ -532,4 +545,4 @@ def compute_hand_reward(
         consecutive_successes,
     )
 
-    return reward, resets, goal_resets, progress_buf, successes, cons_successes
+    return reward, resets, goal_resets, progress_buf, hold_count_buf, successes, cons_successes

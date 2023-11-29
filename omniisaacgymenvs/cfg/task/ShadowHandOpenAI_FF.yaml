@@ -26,6 +26,8 @@ env:
   resetDofPosRandomInterval: 0.2
   resetDofVelRandomInterval: 0.0
 
+  num_success_hold_steps: 10
+
  # Random forces applied to the object
   forceScale: 1.0
   forceProbRange: [0.001, 0.1]
