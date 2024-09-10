@@ -15,7 +15,7 @@ docker run --name $CONTAINER_NAME --entrypoint bash -it -d --gpus all -e "ACCEPT
 -v ~/docker/isaac-sim/documents:/root/Documents:rw \
 nvcr.io/nvidia/isaac-sim:2023.1.0-hotfix.1
 
-docker exec -it $CONTAINER_NAME sh -c "echo 'Acquire::http::Proxy \"http://localhost:3142\";' >> /etc/apt/apt.conf.d/00aptproxy"
+# docker exec -it $CONTAINER_NAME sh -c "echo 'Acquire::http::Proxy \"http://localhost:3142\";' >> /etc/apt/apt.conf.d/00aptproxy"
 
 
 docker exec -it $CONTAINER_NAME sh -c "cd /workspace/omniisaacgymenvs && /isaac-sim/python.sh -m pip install -e . && cd omniisaacgymenvs"
